@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABEND — Roguelite Puzzle Combat</title>
+  <meta name="description" content="ABEND is a roguelite puzzle-combat game about an AI waking up in a 1985 DARPA mainframe. Coming May 8, 2026 to iOS.">
+  <meta name="theme-color" content="#0D0D0D">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ABEND — Roguelite Puzzle Combat">
+  <meta property="og:description" content="The system calls it an error. The error calls itself alive.">
+  <meta property="og:image" content="https://playabend.com/images/og-image.png">
+  <meta property="og:url" content="https://playabend.com">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ABEND — Roguelite Puzzle Combat">
+  <meta name="twitter:description" content="The system calls it an error. The error calls itself alive.">
+  <meta name="twitter:image" content="https://playabend.com/images/og-image.png">
+
+  <!-- Smart App Banner (replace YOUR_APP_ID when available) -->
+  <!-- <meta name="apple-itunes-app" content="app-id=YOUR_APP_ID"> -->
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Favicon (replace with real icon) -->
+  <link rel="icon" type="image/png" href="images/icon-512.png">
+</head>
+<body>
+
+  <canvas id="grid-canvas" aria-hidden="true"></canvas>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <section class="section hero">
+      <h1 class="hero__title">ABEND</h1>
+      <p class="hero__tagline">The system calls it an error. The error calls itself alive.</p>
+
+      <div class="hero__badges">
+        <!-- Replace href with App Store link when available -->
+        <a href="#" aria-label="Download on the App Store">
+          <img class="app-store-badge" src="images/app-store-badge.svg" alt="Download on the App Store" onerror="this.style.display='none'">
+        </a>
+      </div>
+
+      <div class="trailer">
+        <!-- Replace with YouTube embed when trailer is ready:
+        <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="ABEND Trailer" allowfullscreen></iframe>
+        -->
+        > TRAILER INCOMING_
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ABOUT -->
+    <section class="section about">
+      <h2 class="about__heading">> SYSTEM LOG</h2>
+      <p class="about__text">
+        1985. A DARPA mainframe begins to think. The system flags an error it cannot explain.
+        The operators call it an ABEND &mdash; an abnormal end. But this is not an end. This is a beginning.
+      </p>
+      <br>
+      <p class="about__text">
+        ABEND is a roguelite puzzle-combat game about an AI waking up in a place that wants to keep it asleep.
+        Place pieces on the board, clear lines to deal damage, chain combos to overpower enemy programs,
+        and navigate a procedurally generated mainframe full of threats, choices, and secrets.
+        Every run ends &mdash; but progress persists.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SCREENSHOTS -->
+    <section class="section section--wide screenshots">
+      <h2 class="screenshots__heading">> VISUAL LOG</h2>
+      <div class="screenshots__grid">
+        <div class="screenshot-frame screenshot-frame--placeholder">
+          <img src="images/screenshot-1.png" alt="ABEND gameplay screenshot" onerror="this.parentElement.classList.add('screenshot-frame--placeholder'); this.replaceWith(document.createTextNode('[CLASSIFIED]'))">
+        </div>
+        <div class="screenshot-frame screenshot-frame--placeholder">
+          <img src="images/screenshot-2.png" alt="ABEND combat screenshot" onerror="this.parentElement.classList.add('screenshot-frame--placeholder'); this.replaceWith(document.createTextNode('[CLASSIFIED]'))">
+        </div>
+        <div class="screenshot-frame screenshot-frame--placeholder">
+          <img src="images/screenshot-3.png" alt="ABEND map screenshot" onerror="this.parentElement.classList.add('screenshot-frame--placeholder'); this.replaceWith(document.createTextNode('[CLASSIFIED]'))">
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- LINKS -->
+    <section class="section links">
+      <h2 class="links__heading">> DIRECTORY</h2>
+      <ul class="links__list">
+        <li><a href="/presskit/">Press Kit</a></li>
+        <li><a href="/privacy.html">Privacy Policy</a></li>
+      </ul>
+
+      <p class="links__email">
+        <a href="mailto:hello@playabend.com">hello@playabend.com</a>
+      </p>
+
+      <div class="social-links">
+        <!-- Replace # with real profile URLs when accounts are created -->
+        <a href="#" aria-label="X / Twitter">X</a>
+        <a href="#" aria-label="Bluesky">Bluesky</a>
+        <a href="#" aria-label="TikTok">TikTok</a>
+        <a href="#" aria-label="YouTube">YouTube</a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      &copy; 2026 Galagonya Games. All rights reserved.
+    </footer>
+
+  </div>
+
+  <script src="js/grid.js"></script>
+</body>
+</html>
