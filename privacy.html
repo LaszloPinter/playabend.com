@@ -29,17 +29,34 @@
 
     <section class="section privacy-content">
 
-      <p><strong>Last updated:</strong> March 1, 2026</p>
+      <p><strong>Last updated:</strong> March 15, 2026</p>
       <p>
         This privacy policy describes how ABEND ("the App"), developed by Galagonya Games ("the Developer"),
-        handles user data. The short version: the App collects no personal data.
+        handles user data. The short version: the App collects no personal data. It uses Firebase for
+        crash reporting and basic gameplay telemetry only.
       </p>
 
       <h2>> DATA COLLECTION</h2>
       <p>
-        ABEND does not collect, store, transmit, or share any personal information.
-        The App contains no analytics, no advertising, no tracking pixels, no user accounts,
-        and no third-party SDKs that collect data.
+        ABEND does not collect, store, or share any personal information. The App contains no advertising,
+        no tracking pixels, no user accounts, and no social login features. The App does not collect
+        your name, email, location, contacts, or any other personally identifiable information.
+      </p>
+      <p>
+        The App uses Google Firebase for two purposes:
+      </p>
+      <ul>
+        <li><strong>Firebase Crashlytics</strong> — automatically collects anonymous crash reports
+          (stack traces, device model, OS version) to help the Developer fix bugs. No personal data
+          is included in crash reports.</li>
+        <li><strong>Firebase Analytics</strong> — collects anonymous gameplay telemetry such as
+          floors completed, enemies defeated, and session duration. This data is aggregated and
+          cannot be used to identify individual users. No advertising identifiers are collected.</li>
+      </ul>
+      <p>
+        Both services are operated by Google and subject to
+        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.
+        The Developer only accesses aggregated, anonymous data through the Firebase console.
       </p>
 
       <h2>> LOCAL STORAGE</h2>
@@ -73,8 +90,19 @@
 
       <h2>> THIRD-PARTY SERVICES</h2>
       <p>
-        ABEND does not integrate with any third-party services that collect user data.
-        There are no ads, no analytics platforms, and no social login features.
+        ABEND integrates with the following third-party services:
+      </p>
+      <ul>
+        <li><strong>Firebase Crashlytics</strong> (Google) — anonymous crash reporting.
+          <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase Privacy</a>.</li>
+        <li><strong>Firebase Analytics</strong> (Google) — anonymous gameplay telemetry.
+          No advertising identifiers are collected. No data is shared with ad networks.</li>
+        <li><strong>Apple Game Center</strong> — leaderboards, achievements, and challenges.
+          Governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</li>
+      </ul>
+      <p>
+        There are no ads, no ad SDKs, no attribution SDKs, no social login features,
+        and no user-targeting or monetization analytics.
       </p>
 
       <h2>> CHANGES TO THIS POLICY</h2>
