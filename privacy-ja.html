@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プライバシーポリシー — ABEND</title>
+  <meta name="description" content="ABENDのプライバシーポリシー。iOS向けローグライトパズルコンバットゲーム。">
+  <meta name="theme-color" content="#0D0D0D">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/icon-512.png">
+</head>
+<body>
+  <canvas id="grid-canvas" aria-hidden="true"></canvas>
+  <div class="content">
+    <header class="section privacy-header">
+      <h1 class="privacy-header__title">プライバシーポリシー</h1>
+      <a href="/" class="privacy-header__back">&lt; playabend.comに戻る</a>
+    </header>
+    <section class="section privacy-content">
+      <p><strong>最終更新日：</strong>2026年3月15日</p>
+      <p>このプライバシーポリシーは、Galagonya Games（「開発者」）が開発したABEND（「本アプリ」）がユーザーデータをどのように取り扱うかを説明します。要約：本アプリは個人データを収集しません。Firebaseをクラッシュレポートと基本的なゲームプレイ統計にのみ使用しています。</p>
+
+      <h2>> データ収集</h2>
+      <p>ABENDは個人情報を収集、保存、共有しません。本アプリには広告、トラッキングピクセル、ユーザーアカウント、ソーシャルログイン機能はありません。本アプリは氏名、メールアドレス、位置情報、連絡先、その他の個人を特定できる情報を収集しません。</p>
+      <p>本アプリはGoogle Firebaseを2つの目的で使用しています：</p>
+      <ul>
+        <li><strong>Firebase Crashlytics</strong> — 開発者のバグ修正を支援するために、匿名のクラッシュレポート（スタックトレース、デバイスモデル、OSバージョン）を自動収集します。クラッシュレポートに個人データは含まれません。</li>
+        <li><strong>Firebase Analytics</strong> — クリアしたフロア数、倒した敵の数、セッション時間などの匿名のゲームプレイテレメトリを収集します。これらのデータは集計されており、個々のユーザーの特定には使用できません。広告識別子は収集されません。</li>
+      </ul>
+      <p>両サービスはGoogleが運営しており、<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Googleのプライバシーポリシー</a>に準拠しています。開発者はFirebaseコンソールを通じて集計された匿名データにのみアクセスします。</p>
+
+      <h2>> ローカルストレージ</h2>
+      <p>本アプリはデバイスのローカルストレージ（UserDefaultsおよびデバイス内ファイル）を使用して、ゲームの進行状況、設定、環境設定を保存します。これらのデータがデバイスから送信されることはなく、開発者や第三者がアクセスすることはありません。</p>
+
+      <h2>> GAME CENTER</h2>
+      <p>ABENDは実績やリーダーボードのためにApple Game Centerと連携する場合があります。Game CenterはAppleが運営しており、<a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Appleのプライバシーポリシー</a>に準拠しています。</p>
+
+      <h2>> ICLOUD</h2>
+      <p>将来のアップデートでゲーム進行のiCloud同期が追加される可能性があります。実装された場合、同期データはお客様のiCloudアカウントに保存され、<a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Appleのプライバシーポリシー</a>に準拠します。</p>
+
+      <h2>> 子どものプライバシー</h2>
+      <p>ABENDは13歳未満の子どもを含め、いかなる人からも個人情報を収集しません。</p>
+
+      <h2>> サードパーティサービス</h2>
+      <p>ABENDは以下のサードパーティサービスと連携しています：</p>
+      <ul>
+        <li><strong>Firebase Crashlytics</strong>（Google）— 匿名クラッシュレポート。<a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebaseプライバシー</a>。</li>
+        <li><strong>Firebase Analytics</strong>（Google）— 匿名ゲームプレイテレメトリ。広告識別子は収集されません。広告ネットワークとのデータ共有はありません。</li>
+        <li><strong>Apple Game Center</strong> — リーダーボード、実績、チャレンジ。<a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Appleのプライバシーポリシー</a>に準拠。</li>
+      </ul>
+      <p>広告、広告SDK、アトリビューションSDK、ソーシャルログイン機能、ユーザーターゲティングやマネタイズ分析はありません。</p>
+
+      <h2>> ポリシーの変更</h2>
+      <p>このポリシーが変更された場合、更新版は「最終更新日」を改訂した上でこのURLに掲載されます。</p>
+
+      <h2>> お問い合わせ</h2>
+      <p>このプライバシーポリシーについてご質問がある場合：<br><a href="mailto:hello@playabend.com">hello@playabend.com</a></p>
+    </section>
+    <footer class="footer">&copy; 2026 Galagonya Games. All rights reserved.</footer>
+  </div>
+  <script src="js/grid.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adatvédelmi irányelvek — ABEND</title>
+  <meta name="description" content="Az ABEND adatvédelmi irányelvei, egy roguelite puzzle-harci játék iOS-re.">
+  <meta name="theme-color" content="#0D0D0D">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/icon-512.png">
+</head>
+<body>
+  <canvas id="grid-canvas" aria-hidden="true"></canvas>
+  <div class="content">
+    <header class="section privacy-header">
+      <h1 class="privacy-header__title">ADATVÉDELMI IRÁNYELVEK</h1>
+      <a href="/" class="privacy-header__back">&lt; Vissza a playabend.com oldalra</a>
+    </header>
+    <section class="section privacy-content">
+      <p><strong>Utolsó frissítés:</strong> 2026. március 15.</p>
+      <p>Ez az adatvédelmi irányelv leírja, hogyan kezeli az ABEND („az Alkalmazás"), amelyet a Galagonya Games („a Fejlesztő") fejlesztett, a felhasználói adatokat. Röviden: az Alkalmazás nem gyűjt személyes adatokat. A Firebase-t kizárólag hibajelentésekhez és alapvető játékstatisztikákhoz használja.</p>
+
+      <h2>> ADATGYŰJTÉS</h2>
+      <p>Az ABEND nem gyűjt, nem tárol és nem oszt meg személyes adatokat. Az Alkalmazás nem tartalmaz hirdetéseket, követőpixeleket, felhasználói fiókokat vagy közösségi bejelentkezési funkciókat. Az Alkalmazás nem gyűjti a neved, e-mail címed, tartózkodási helyed, névjegyeid vagy bármilyen más személyazonosításra alkalmas adatot.</p>
+      <p>Az Alkalmazás a Google Firebase-t két célra használja:</p>
+      <ul>
+        <li><strong>Firebase Crashlytics</strong> — automatikusan gyűjt anonim hibajelentéseket (veremnyomok, eszközmodell, operációs rendszer verziója), hogy segítse a Fejlesztőt a hibák javításában. A hibajelentések nem tartalmaznak személyes adatokat.</li>
+        <li><strong>Firebase Analytics</strong> — anonim játékstatisztikákat gyűjt, mint például teljesített emeletek, legyőzött ellenségek és munkamenet időtartama. Ezek az adatok összesítettek, és nem használhatók egyedi felhasználók azonosítására. Nem gyűjt hirdetési azonosítókat.</li>
+      </ul>
+      <p>Mindkét szolgáltatást a Google üzemelteti, és a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Adatvédelmi irányelveinek</a> hatálya alá tartozik. A Fejlesztő kizárólag összesített, anonim adatokhoz fér hozzá a Firebase konzolon keresztül.</p>
+
+      <h2>> HELYI TÁROLÁS</h2>
+      <p>Az Alkalmazás az eszközöd helyi tárhelyét (UserDefaults és eszközön tárolt fájlok) használja a játékállás, beállítások és preferenciák mentéséhez. Ezek az adatok soha nem hagyják el az eszközödet, és sem a Fejlesztő, sem harmadik fél nem fér hozzájuk.</p>
+
+      <h2>> GAME CENTER</h2>
+      <p>Az ABEND integrálódhat az Apple Game Centerrel teljesítmények és ranglisták céljából. A Game Centert az Apple üzemelteti, és az <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple Adatvédelmi irányelveinek</a> hatálya alá tartozik. A Fejlesztő nem fér hozzá a Game Center adataidhoz azon túl, amit az Apple a szabványos API-jain keresztül biztosít.</p>
+
+      <h2>> ICLOUD</h2>
+      <p>Egy jövőbeli frissítés iCloud szinkronizálást adhat a játékálláshoz. Megvalósítás esetén a szinkronizált adatok a személyes iCloud-fiókodban lesznek tárolva, az <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple Adatvédelmi irányelveinek</a> hatálya alatt.</p>
+
+      <h2>> GYERMEKEK ADATVÉDELME</h2>
+      <p>Az ABEND senkitől nem gyűjt személyes adatokat, beleértve a 13 év alatti gyermekeket sem.</p>
+
+      <h2>> HARMADIK FÉLTŐL SZÁRMAZÓ SZOLGÁLTATÁSOK</h2>
+      <p>Az ABEND a következő harmadik féltől származó szolgáltatásokat használja:</p>
+      <ul>
+        <li><strong>Firebase Crashlytics</strong> (Google) — anonim hibajelentések. <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase Adatvédelem</a>.</li>
+        <li><strong>Firebase Analytics</strong> (Google) — anonim játékstatisztikák. Nem gyűjt hirdetési azonosítókat. Nem oszt meg adatokat hirdetési hálózatokkal.</li>
+        <li><strong>Apple Game Center</strong> — ranglisták, teljesítmények és kihívások. Az <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple Adatvédelmi irányelveinek</a> hatálya alatt.</li>
+      </ul>
+      <p>Nincsenek hirdetések, hirdetési SDK-k, attribúciós SDK-k, közösségi bejelentkezési funkciók, és nincs felhasználó-célzó vagy monetizációs analitika.</p>
+
+      <h2>> AZ IRÁNYELVEK MÓDOSÍTÁSAI</h2>
+      <p>Ha ez az irányelv megváltozik, a frissített verzió ezen az URL-en lesz közzétéve, frissített „Utolsó frissítés" dátummal.</p>
+
+      <h2>> KAPCSOLAT</h2>
+      <p>Ha kérdésed van ezzel az adatvédelmi irányelvvel kapcsolatban:<br><a href="mailto:hello@playabend.com">hello@playabend.com</a></p>
+    </section>
+    <footer class="footer">&copy; 2026 Galagonya Games. Minden jog fenntartva.</footer>
+  </div>
+  <script src="js/grid.js"></script>
+</body>
+</html>
