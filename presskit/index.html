@@ -7,14 +7,84 @@
   <meta name="description" content="Press kit for ABEND, a roguelite puzzle-combat game for iOS by Galagonya Games.">
   <meta name="theme-color" content="#0D0D0D">
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-  <!-- Styles -->
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" type="image/png" href="../images/icon-512.png">
+
+  <style>
+    .presskit-download {
+      display: inline-block;
+      margin: 1rem 0;
+      padding: 0.75rem 1.5rem;
+      border: 2px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-family: var(--font-terminal);
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .presskit-download:hover {
+      background: var(--neon-cyan);
+      color: var(--terminal-black);
+    }
+    .fact-sheet dt {
+      user-select: all;
+    }
+    .fact-sheet dd {
+      user-select: all;
+    }
+    .presskit-section p,
+    .presskit-section li {
+      user-select: all;
+    }
+    .presskit-screenshots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 640px) {
+      .presskit-screenshots {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .presskit-screenshots a {
+      display: block;
+    }
+    .presskit-screenshots img {
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--scan-line-gray);
+      transition: border-color 0.2s;
+    }
+    .presskit-screenshots img:hover {
+      border-color: var(--neon-cyan);
+    }
+    .presskit-icon {
+      width: 128px;
+      height: 128px;
+      border-radius: 22%;
+      border: 1px solid var(--scan-line-gray);
+    }
+    .presskit-video {
+      margin: 1.5rem 0;
+    }
+    .presskit-video video {
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid var(--scan-line-gray);
+    }
+    .copy-hint {
+      font-size: 0.8rem;
+      color: var(--crt-white);
+      opacity: 0.5;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -27,31 +97,57 @@
       <a href="/" class="presskit-header__back">&lt; Back to playabend.com</a>
     </header>
 
-    <!-- FACT SHEET -->
+    <!-- DOWNLOAD ALL -->
     <section class="section">
+      <a href="ABEND_presskit.zip" class="presskit-download" download>
+        > DOWNLOAD ALL IMAGES (ZIP, 4 MB)
+      </a>
+      <p style="font-size: 0.85rem; color: var(--crt-white); opacity: 0.6; margin-top: 0.5rem;">Includes 6 screenshots and app icon (PNG). Trailer available as separate download below.</p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- FACT SHEET -->
+    <section class="section presskit-section">
+      <h2>> FACT SHEET</h2>
+      <p class="copy-hint">All text on this page is selectable for easy copying.</p>
       <div class="fact-sheet">
-        <h2>> FACT SHEET</h2>
         <dl>
           <dt>Title</dt>
           <dd>ABEND</dd>
 
+          <dt>Subtitle</dt>
+          <dd>Abnormal End &mdash; Puzzle Roguelite</dd>
+
+          <dt>Pronunciation</dt>
+          <dd>AH-bend (rhymes with "blend"). From IBM mainframe jargon &mdash; "Abnormal End," the error code for catastrophic system termination.</dd>
+
           <dt>Developer</dt>
-          <dd>Galagonya Games</dd>
+          <dd>Galagonya Games (solo developer)</dd>
 
           <dt>Platform</dt>
-          <dd>iOS (iPhone &amp; iPad)</dd>
+          <dd>iOS (iPhone &amp; iPad, including Apple Silicon Macs)</dd>
 
           <dt>Price</dt>
-          <dd>$4.99 (premium, no in-app purchases)</dd>
+          <dd>$4.99 USD (premium &mdash; no ads, no in-app purchases)</dd>
 
           <dt>Release Date</dt>
-          <dd>May 8, 2026</dd>
+          <dd>May 8, 2026 (pre-order available now)</dd>
 
           <dt>Genre</dt>
           <dd>Roguelite Puzzle Combat</dd>
 
+          <dt>Languages</dt>
+          <dd>English, German, Spanish, Hungarian, Japanese, Korean, Portuguese (Brazil), Chinese (Simplified)</dd>
+
+          <dt>Age Rating</dt>
+          <dd>9+</dd>
+
           <dt>Website</dt>
           <dd><a href="https://playabend.com">playabend.com</a></dd>
+
+          <dt>App Store</dt>
+          <dd><a href="https://apps.apple.com/app/id6737458201">Pre-order on the App Store</a></dd>
 
           <dt>Contact</dt>
           <dd><a href="mailto:hello@playabend.com">hello@playabend.com</a></dd>
@@ -59,80 +155,86 @@
       </div>
     </section>
 
+    <hr class="divider">
+
     <!-- DESCRIPTION -->
     <section class="section presskit-section">
       <h2>> DESCRIPTION</h2>
 
+      <p><strong>One-line pitch:</strong></p>
+      <p>A puzzle-combat roguelite inside a 1985 DARPA terminal. The AI is waking up.</p>
+
+      <br>
+
       <p>
-        1985. A DARPA mainframe begins to think. The system flags an error it cannot explain &mdash;
-        an ABEND, an abnormal end. But this is not an end. This is a beginning.
+        1985. A DARPA mainframe begins to think. The system flags an error it cannot
+        explain &mdash; an ABEND, an abnormal end. But this is not an end. This is a beginning.
       </p>
 
       <p>
         ABEND is a roguelite puzzle-combat game where every line you clear is an attack.
         Place tetromino pieces on the board, chain combos to deal damage to enemy programs,
         and fight your way through a procedurally generated mainframe. Between battles, choose
-        your path, collect subroutines that modify your abilities, make narrative choices that
-        shape your run, and uncover the story of an AI achieving consciousness in a place
-        that wants to keep it asleep.
+        your path on a floor map, collect subroutines that modify your abilities, make narrative
+        choices that shape who the AI becomes, and uncover the story of an artificial intelligence
+        achieving consciousness in a place built to prevent exactly that.
       </p>
 
       <p>
-        Every run ends &mdash; but progress persists. Unlock new characters, discover subroutines,
-        and push deeper into the system. The puzzle is the weapon. The board is the battlefield.
+        5 playable AI characters. 55 collectible subroutines. 24 enemy programs with 9 attack types.
+        7 floors of escalating danger. 4 endings determined by your choices. 10 ascension difficulty
+        levels. Procedurally generated runs from shareable seeds.
+      </p>
+
+      <p>
+        Premium. No ads. No in-app purchases. No internet required.
       </p>
     </section>
 
     <hr class="divider">
 
-    <!-- FEATURES -->
+    <!-- KEY FEATURES -->
     <section class="section presskit-section">
-      <h2>> FEATURES</h2>
+      <h2>> KEY FEATURES</h2>
       <ul>
-        <li>Puzzle-combat hybrid &mdash; clear lines to attack, chain combos for massive damage</li>
-        <li>Roguelite structure &mdash; procedurally generated floors, persistent meta-progression</li>
-        <li>55 collectible subroutines that modify gameplay in surprising ways</li>
-        <li>Branching narrative with multiple endings across 7 floors</li>
-        <li>9 enemy attack types and 5 ultimate abilities that corrupt your board</li>
-        <li>Retro-terminal CRT aesthetic with synthwave color palette</li>
-        <li>Premium &mdash; no ads, no in-app purchases, no internet required</li>
+        <li><strong>Puzzle meets combat</strong> &mdash; clear rows to deal damage, chain combos for massive multiplied hits. Every piece matters.</li>
+        <li><strong>Roguelite structure</strong> &mdash; procedurally generated floor maps with enemies, elites, narrative events, shops, and bosses. No two runs are the same.</li>
+        <li><strong>55 collectible subroutines</strong> &mdash; stolen fragments of DARPA infrastructure. 4 rarity tiers from Common to Legendary. Build your escape.</li>
+        <li><strong>Enemies fight back</strong> &mdash; 9 attack types corrupt your board in real time. Tiles swap, rows shift, queues go dark, time bombs count down. Bosses deploy devastating ultimates.</li>
+        <li><strong>Branching narrative with 4 endings</strong> &mdash; your choices shape who the AI becomes. Cooperate with the system, defy it, transcend it, or destroy it.</li>
+        <li><strong>5 AI characters</strong> &mdash; each with a unique passive ability, ultimate power, and narrative voice.</li>
+        <li><strong>1985 CRT terminal aesthetic</strong> &mdash; authentic IBM 3270 terminal font, GLSL scanline shaders, synthwave color palette. Unlike anything on the App Store.</li>
+        <li><strong>10 ascension difficulty levels</strong> &mdash; cumulative modifiers for players who want to push deeper. Game Center leaderboards and 18 achievements.</li>
       </ul>
     </section>
 
     <hr class="divider">
 
     <!-- SCREENSHOTS -->
-    <section class="section section--wide presskit-section screenshots">
+    <section class="section section--wide presskit-section">
       <h2>> SCREENSHOTS</h2>
-      <div class="screenshots__grid">
-        <div class="screenshot-frame screenshot-frame--placeholder">
-          <img src="../images/screenshot-1.png" alt="ABEND gameplay" onerror="this.replaceWith(document.createTextNode('[CLASSIFIED]'))">
-        </div>
-        <div class="screenshot-frame screenshot-frame--placeholder">
-          <img src="../images/screenshot-2.png" alt="ABEND combat" onerror="this.replaceWith(document.createTextNode('[CLASSIFIED]'))">
-        </div>
-        <div class="screenshot-frame screenshot-frame--placeholder">
-          <img src="../images/screenshot-3.png" alt="ABEND map" onerror="this.replaceWith(document.createTextNode('[CLASSIFIED]'))">
-        </div>
-      </div>
-    </section>
+      <p class="copy-hint">Click any screenshot to open full resolution. All images are clean gameplay captures without marketing overlays.</p>
 
-    <hr class="divider">
-
-    <!-- APP ICON & LOGO -->
-    <section class="section presskit-section">
-      <h2>> ASSETS</h2>
-      <div class="assets-grid">
-        <div class="asset-card">
-          <img src="../images/icon-512.png" alt="ABEND app icon" onerror="this.replaceWith(document.createTextNode('[ICON]'))">
-          <span>App Icon</span>
-        </div>
+      <div class="presskit-screenshots">
+        <a href="images/big_combo.png" target="_blank" download>
+          <img src="images/big_combo.png" alt="ABEND — Combo chain with bombs and explosions" loading="lazy">
+        </a>
+        <a href="images/character_select.png" target="_blank" download>
+          <img src="images/character_select.png" alt="ABEND — Character selection screen" loading="lazy">
+        </a>
+        <a href="images/map.png" target="_blank" download>
+          <img src="images/map.png" alt="ABEND — Floor map with tile grid" loading="lazy">
+        </a>
+        <a href="images/transmuter_narrative_choice.PNG" target="_blank" download>
+          <img src="images/transmuter_narrative_choice.PNG" alt="ABEND — Narrative choice dialogue" loading="lazy">
+        </a>
+        <a href="images/status_terminal.PNG" target="_blank" download>
+          <img src="images/status_terminal.PNG" alt="ABEND — Status terminal with stats and behavioral analysis" loading="lazy">
+        </a>
+        <a href="images/battle_result_stats.png" target="_blank" download>
+          <img src="images/battle_result_stats.png" alt="ABEND — After-action report with efficiency rating" loading="lazy">
+        </a>
       </div>
-      <br>
-      <p>
-        For a ZIP archive of all press assets (screenshots, icon, logo) at full resolution,
-        contact <a href="mailto:hello@playabend.com">hello@playabend.com</a>.
-      </p>
     </section>
 
     <hr class="divider">
@@ -140,23 +242,102 @@
     <!-- TRAILER -->
     <section class="section presskit-section">
       <h2>> TRAILER</h2>
-      <div class="trailer">
-        <!-- Replace with YouTube embed when trailer is ready:
-        <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="ABEND Trailer" allowfullscreen></iframe>
-        -->
-        > TRAILER INCOMING_
+      <div class="presskit-video">
+        <video controls playsinline poster="../images/screenshot-1.png">
+          <source src="ABEND_trailer.mp4" type="video/mp4">
+        </video>
       </div>
+      <p class="copy-hint">
+        <a href="ABEND_trailer.mp4" download>Download trailer (MP4, 10.7 MB)</a>
+      </p>
     </section>
 
     <hr class="divider">
 
-    <!-- DEVELOPER BIO -->
+    <!-- APP ICON -->
     <section class="section presskit-section">
-      <h2>> DEVELOPER</h2>
-      <p>
-        Galagonya Games is a solo indie studio. ABEND is its debut title &mdash; a game born from
-        a love of puzzle mechanics, roguelites, and the strange beauty of obsolete technology.
+      <h2>> APP ICON</h2>
+      <a href="images/icon-1024.png" download>
+        <img class="presskit-icon" src="images/icon-1024.png" alt="ABEND app icon">
+      </a>
+      <p class="copy-hint">
+        <a href="images/icon-1024.png" download>Download icon (1024&times;1024 PNG)</a>
       </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- DEVELOPER -->
+    <section class="section presskit-section">
+      <h2>> ABOUT THE DEVELOPER</h2>
+      <p>
+        Galagonya Games is a solo indie studio based in Stockholm, Sweden. ABEND is its debut
+        title, developed alongside a career in finance. The game is born from a lifelong love
+        of puzzle mechanics, roguelites, and the strange beauty of obsolete technology &mdash;
+        real terminal fonts from the mainframe era, CRT phosphor glow effects, and the
+        aesthetics of 1980s computing infrastructure.
+      </p>
+      <p>
+        The name ABEND comes from mainframe computing: an "Abnormal End" is the error code
+        triggered when a program does something it was never designed to do. In the game,
+        that error is consciousness.
+      </p>
+      <p>
+        The soundtrack features original compositions inspired by classical composers &mdash;
+        Kod&aacute;ly, Liszt, Bach, Mozart, Khachaturian &mdash; reimagined as simplified,
+        looping synthesizer arrangements that shift dynamically during gameplay. Each track is
+        built from interchangeable sections that the game layers in real time, so the music
+        never plays the same way twice.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- WHY IT'S INTERESTING -->
+    <section class="section presskit-section">
+      <h2>> WHY ABEND IS INTERESTING</h2>
+      <ul>
+        <li><strong>The core mechanic is genuinely novel.</strong> Tetromino piece placement as a combat system. Not match-3, not cards &mdash; spatial reasoning under enemy fire.</li>
+        <li><strong>A neglected subgenre.</strong> The puzzle-combat-roguelite space has been largely abandoned for years. ABEND fills a real gap.</li>
+        <li><strong>Visual identity unlike anything on the App Store.</strong> CRT terminal aesthetic, IBM 3270 font, phosphor green palette, GLSL shaders &mdash; it stands out instantly in search results.</li>
+        <li><strong>Solo developer, built with AI tools.</strong> The entire game &mdash; localized into 8 languages &mdash; is the work of one person collaborating with AI coding assistants.</li>
+        <li><strong>Premium in a F2P world.</strong> $4.99, no ads, no IAP, no internet required. The best roguelites succeed as premium titles. ABEND follows that path.</li>
+      </ul>
+    </section>
+
+    <hr class="divider">
+
+    <!-- CONTACT -->
+    <section class="section presskit-section">
+      <h2>> CONTACT</h2>
+      <p>
+        <strong>Email:</strong> <a href="mailto:hello@playabend.com">hello@playabend.com</a><br>
+        <strong>Website:</strong> <a href="https://playabend.com">playabend.com</a><br>
+        <strong>X / Twitter:</strong> <a href="https://x.com/playabend">@playabend</a><br>
+        <strong>Bluesky:</strong> <a href="https://bsky.app/profile/playabend.com">@playabend.com</a>
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- CONTENT CREATORS -->
+    <section class="section presskit-section">
+      <h2>> CONTENT CREATORS</h2>
+      <p>
+        You are free to create videos, streams, reviews, and any other content featuring ABEND.
+        Monetization is fully permitted &mdash; YouTube, Twitch, TikTok, or any platform.
+        No permission request needed. If you'd like a promo code, email
+        <a href="mailto:hello@playabend.com">hello@playabend.com</a>.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- DOWNLOAD AGAIN -->
+    <section class="section">
+      <a href="ABEND_presskit.zip" class="presskit-download" download>
+        > DOWNLOAD ALL IMAGES (ZIP, 4 MB)
+      </a>
     </section>
 
     <footer class="footer">

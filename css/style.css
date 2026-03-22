@@ -191,19 +191,19 @@ body::after {
 
 /* --- Trailer Embed --- */
 .trailer {
-  max-width: 640px;
+  max-width: 280px;
   margin: 0 auto;
-  aspect-ratio: 16 / 9;
   background: var(--console-gray);
   border: 1px solid var(--scan-line-gray);
   border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(224, 224, 224, 0.3);
-  font-family: var(--font-terminal);
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
+  overflow: hidden;
+}
+
+.trailer video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
 }
 
 .trailer iframe {
