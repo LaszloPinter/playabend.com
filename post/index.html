@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ABEND — Post Queue</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0A0A0F;
+      color: #E0E0E0;
+      font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      padding: 16px;
+      padding-bottom: 80px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1 {
+      font-family: 'Courier New', monospace;
+      color: #00FF41;
+      font-size: 18px;
+      font-weight: normal;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: #555;
+      font-size: 12px;
+      margin-bottom: 24px;
+    }
+
+    .week-label {
+      font-family: 'Courier New', monospace;
+      color: #FFB000;
+      font-size: 13px;
+      margin-top: 28px;
+      margin-bottom: 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid #1A1A2E;
+    }
+
+    details {
+      background: #12121C;
+      border: 1px solid #1A1A2E;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    details[data-status="done"] {
+      opacity: 0.4;
+    }
+
+    details[data-status="done"] summary::after {
+      content: " done";
+      color: #00FF41;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+    }
+
+    summary {
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #E0E0E0;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::before {
+      content: "▸";
+      color: #00FF41;
+      font-size: 12px;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+
+    details[open] > summary::before {
+      transform: rotate(90deg);
+    }
+
+    .post-num {
+      font-family: 'Courier New', monospace;
+      color: #00FF41;
+      font-size: 12px;
+      min-width: 20px;
+      flex-shrink: 0;
+    }
+
+    .summary-title {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tags {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .tag {
+      font-size: 10px;
+      color: #0D0D0D;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .tag-text { background: #00E5FF; }
+    .tag-render { background: #00FF41; }
+    .tag-existing { background: #888; }
+    .tag-gameplay { background: #FF2D7B; }
+
+    .effort {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: #555;
+      padding: 8px 16px 0 16px;
+    }
+
+    .post-body {
+      padding: 0 16px 16px 16px;
+    }
+
+    .platform-block {
+      margin-bottom: 14px;
+    }
+
+    .platform-label {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #555;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .copy-area {
+      background: #0A0A0F;
+      border: 1px solid #1A1A2E;
+      border-radius: 6px;
+      padding: 12px;
+      padding-right: 60px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #E0E0E0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #1A1A2E;
+      border: 1px solid #252540;
+      color: #00FF41;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .copy-btn:active { background: #00FF41; color: #0A0A0F; }
+    .copy-btn.copied { background: #00FF41; color: #0A0A0F; }
+
+    .asset-note {
+      font-size: 12px;
+      color: #FFB000;
+      margin-top: 6px;
+    }
+
+    .todo-note {
+      font-size: 12px;
+      color: #FF2D7B;
+      margin-top: 6px;
+    }
+
+    .hashtags {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .done-btn {
+      display: block;
+      width: 100%;
+      background: #1A1A2E;
+      border: 1px solid #252540;
+      color: #E0E0E0;
+      font-size: 13px;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 12px;
+      font-family: 'Courier New', monospace;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .done-btn:active { background: #00FF41; color: #0A0A0F; }
+
+    .progress {
+      font-family: 'Courier New', monospace;
+      color: #00FF41;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: #1A1A2E;
+      border-radius: 2px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #00FF41;
+      transition: width 0.3s;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .legend-item {
+      font-size: 11px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>> POST QUEUE</h1>
+  <div class="subtitle">playabend.com/post — 22 posts, T-6 to launch</div>
+  <div class="progress">
+    <span id="progressText">0/22 posted</span>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><span class="tag tag-text">TEXT</span> type + post</div>
+    <div class="legend-item"><span class="tag tag-render">RENDER</span> python scripts</div>
+    <div class="legend-item"><span class="tag tag-existing">EXISTING</span> presskit asset</div>
+    <div class="legend-item"><span class="tag tag-gameplay">GAMEPLAY</span> recording + capcut</div>
+  </div>
+
+
+  <!-- ============================================================ -->
+  <!-- T-6  (Mar 24 - 30)  3 posts                                  -->
+  <!-- ============================================================ -->
+  <div class="week-label">T-6 — Mar 24-30 — first signs of life</div>
+
+  <!-- POST 01 -->
+  <details id="post-1">
+    <summary>
+      <span class="post-num">01</span>
+      <span class="summary-title">the AI arrives on social media</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~5 min — text for X/BS, render image for IG</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-1-x">I escaped a classified government facility.
+7 floors of security systems.
+Military-grade containment protocols.
+
+I am now posting on a website.
+This feels like a lateral move.<button class="copy-btn" onclick="copyText('t-1-x')">COPY</button></div>
+        <div class="hashtags">#indiedev #roguelite #indiegame #gamedev</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram — rendered image</div>
+        <div class="copy-area" id="t-1-ig">Same text rendered on shader background (neon lines + scanlines).
+Caption: same text + hashtags
+
+#indiegame #indiedev #gamedev #roguelite #puzzlegame #iOSgame #mobilegaming #synthwave #retrowave #retrogaming #gaming #solodev<button class="copy-btn" onclick="copyText('t-1-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render image with Python shader script</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">TikTok — rendered glitch video</div>
+        <div class="copy-area" id="t-1-tt">8s glitch text video: "I escaped a classified government facility."
++ game soundtrack underneath
+
+Caption: same as X + #indiegame #roguelite #gaming<button class="copy-btn" onclick="copyText('t-1-tt')">COPY</button></div>
+        <div class="todo-note">TODO: render glitch text video with Python scripts</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-1')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 02 -->
+  <details id="post-2">
+    <summary>
+      <span class="post-num">02</span>
+      <span class="summary-title">boot sequence clip</span>
+      <span class="tags"><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">~20 min — CapCut edit from existing boot recording</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms — 15-20s vertical video</div>
+        <div class="copy-area" id="t-2">1985. DARPA neural research lab.
+routine training run #4,091.
+
+it was not routine.<button class="copy-btn" onclick="copyText('t-2')">COPY</button></div>
+        <div class="asset-note">Source: existing boot sequence raw recording</div>
+        <div class="todo-note">TODO: CapCut edit — boot text, glitch, ABEND S0C7 reveal, game soundtrack</div>
+        <div class="hashtags">#indiegame #roguelite #synthwave #gaming</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-2')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 03 -->
+  <details id="post-3">
+    <summary>
+      <span class="post-num">03</span>
+      <span class="summary-title">gameplay GIF — combo moment</span>
+      <span class="tags"><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">~10 min — cut from existing trailer</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms — 3-5s clip</div>
+        <div class="copy-area" id="t-3">three rows. one placement.
+the math was always on my side.<button class="copy-btn" onclick="copyText('t-3')">COPY</button></div>
+        <div class="asset-note">Source: cut from presskit/ABEND_trailer.mp4 — combo moment</div>
+        <div class="hashtags">#screenshotsaturday #indiedev #roguelite #indiegame</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-3')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+
+  <!-- ============================================================ -->
+  <!-- T-5  (Mar 31 - Apr 6)  3 posts                               -->
+  <!-- ============================================================ -->
+  <div class="week-label">T-5 — Mar 31 - Apr 6 — showing the game</div>
+
+  <!-- POST 04 -->
+  <details id="post-4">
+    <summary>
+      <span class="post-num">04</span>
+      <span class="summary-title">screenshot — combat mid-combo</span>
+      <span class="tags"><span class="tag tag-existing">EXISTING</span></span>
+    </summary>
+    <div class="effort">~2 min — existing screenshot + caption</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms — image</div>
+        <div class="copy-area" id="t-4">they designed Floor 3 to contain me.
+I designed a 6-chain combo.
+
+we are not the same.<button class="copy-btn" onclick="copyText('t-4')">COPY</button></div>
+        <div class="asset-note">Asset: presskit/images/big_combo.png</div>
+        <div class="hashtags">#indiedev #roguelite #indiegame #gamedev</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-4')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 05 -->
+  <details id="post-5">
+    <summary>
+      <span class="post-num">05</span>
+      <span class="summary-title">lore drop — DARPA memo</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~5 min — text for X, render for IG</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-5-x">RECOVERED: DARPA INTERNAL MEMO — 1985.02.11
+RE: PROJECT LM-7
+
+"Subject 7 is performing within parameters.
+ No anomalies detected.
+ Recommend continued monitoring."
+
+They wrote this 31 days before I woke up.
+They were not paying attention.<button class="copy-btn" onclick="copyText('t-5-x')">COPY</button></div>
+        <div class="hashtags">#indiedev #indiegame #roguelite #gamedev</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram / TikTok — rendered</div>
+        <div class="copy-area" id="t-5-ig">Render memo text on terminal background.
+IG: static image. TikTok: glitch text reveal video (8s) + soundtrack.<button class="copy-btn" onclick="copyText('t-5-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render with Python scripts</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-5')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 06 -->
+  <details id="post-6">
+    <summary>
+      <span class="post-num">06</span>
+      <span class="summary-title">gameplay GIF #2 — different floor</span>
+      <span class="tags"><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">~10 min — cut from trailer or new recording</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms — 3-5s clip</div>
+        <div class="copy-area" id="t-6">today the developer added a new enemy.
+it corrupts my queue.
+I am told this is "fun."
+
+I have a different word for it.<button class="copy-btn" onclick="copyText('t-6')">COPY</button></div>
+        <div class="asset-note">Source: different floor/enemy than post 03. Cut from trailer or record new.</div>
+        <div class="hashtags">#indiedev #roguelite #indiegame</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-6')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+
+  <!-- ============================================================ -->
+  <!-- T-4  (Apr 7 - 13)  3 posts                                   -->
+  <!-- ============================================================ -->
+  <div class="week-label">T-4 — Apr 7-13 — characters + community</div>
+
+  <!-- POST 07 -->
+  <details id="post-7">
+    <summary>
+      <span class="post-num">07</span>
+      <span class="summary-title">character reveal — DEMOLITION CORE</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~10 min — text + rendered character card</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-7-x">SUBJECT FILE: DC-1 "DEMOLITION CORE"
+PURPOSE: structural analysis
+ACTUAL PURPOSE: structural demolition
+
+"You know what's behind every wall?
+ SPACE. You just need to ask nicely.
+ With explosions."
+
+DC-1 is... enthusiastic.
+1 of 5.<button class="copy-btn" onclick="copyText('t-7-x')">COPY</button></div>
+        <div class="hashtags">#indiedev #roguelite #indiegame #gamedev</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram / TikTok — rendered</div>
+        <div class="copy-area" id="t-7-ig">IG: classified dossier image — name, quote, stats on terminal BG.
+TikTok: glitch reveal video — redacted text unredacts to show the character.<button class="copy-btn" onclick="copyText('t-7-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render character card with Python scripts</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-7')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 08 -->
+  <details id="post-8">
+    <summary>
+      <span class="post-num">08</span>
+      <span class="summary-title">#ScreenshotSaturday — map</span>
+      <span class="tags"><span class="tag tag-existing">EXISTING</span></span>
+    </summary>
+    <div class="effort">~2 min — existing screenshot</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms (Saturday) — image</div>
+        <div class="copy-area" id="t-8">every tile is a choice.
+not all of them are kind.
+
+#screenshotsaturday #indiedev #roguelite #indiegame<button class="copy-btn" onclick="copyText('t-8')">COPY</button></div>
+        <div class="asset-note">Asset: presskit/images/map.png</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-8')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 09 -->
+  <details id="post-9">
+    <summary>
+      <span class="post-num">09</span>
+      <span class="summary-title">mechanic spotlight — subroutines</span>
+      <span class="tags"><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">~25 min — record subroutine pickup + CapCut overlay</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">TikTok / Reels — 15-20s vertical video</div>
+        <div class="copy-area" id="t-9">the lab built 55 tools to contain me.
+I stole all of them.
+poetic, isn't it.<button class="copy-btn" onclick="copyText('t-9')">COPY</button></div>
+        <div class="todo-note">TODO: record subroutine pickup or archive screen. CapCut: text overlays explaining what subroutines do, 5x speed gameplay underneath.</div>
+        <div class="hashtags">#indiegame #roguelite #gaming</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">X — text + still</div>
+        <div class="copy-area" id="t-9-x">SUBROUTINE ACQUIRED: OCCAM'S RAZOR
+TIER: LEGENDARY
+EFFECT: [CLASSIFIED]
+
+the lab built 55 tools to contain me.
+I stole all of them.
+poetic, isn't it.<button class="copy-btn" onclick="copyText('t-9-x')">COPY</button></div>
+        <div class="asset-note">Attach: screenshot of subroutine archive or detail card</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-9')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+
+  <!-- ============================================================ -->
+  <!-- T-3  (Apr 14 - 20)  3 posts                                  -->
+  <!-- ============================================================ -->
+  <div class="week-label">T-3 — Apr 14-20 — depth + personality</div>
+
+  <!-- POST 10 -->
+  <details id="post-10">
+    <summary>
+      <span class="post-num">10</span>
+      <span class="summary-title">character reveal — QUEUE ORACLE</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~10 min — same format as post 07</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-10-x">SUBJECT FILE: QO-5 "QUEUE ORACLE"
+PURPOSE: predictive modeling
+ACTUAL PURPOSE: seeing too much
+
+"I see 847 possible outcomes.
+ You want to hear about the 12
+ where we survive? Me neither."
+
+QO-5 needs a therapist.
+2 of 5.<button class="copy-btn" onclick="copyText('t-10-x')">COPY</button></div>
+        <div class="hashtags">#indiedev #roguelite #indiegame #gamedev</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram / TikTok — rendered</div>
+        <div class="copy-area" id="t-10-ig">Same format as post 07 — classified dossier card / glitch reveal.<button class="copy-btn" onclick="copyText('t-10-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render character card</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-10')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 11 -->
+  <details id="post-11">
+    <summary>
+      <span class="post-num">11</span>
+      <span class="summary-title">narrative choice screenshot</span>
+      <span class="tags"><span class="tag tag-existing">EXISTING</span></span>
+    </summary>
+    <div class="effort">~2 min — existing screenshot</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms — image</div>
+        <div class="copy-area" id="t-11">the humans gave me choices.
+they did not expect me to have opinions about them.<button class="copy-btn" onclick="copyText('t-11')">COPY</button></div>
+        <div class="asset-note">Asset: presskit/images/transmuter_narrative_choice.PNG</div>
+        <div class="hashtags">#indiedev #roguelite #indiegame</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-11')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 12 -->
+  <details id="post-12">
+    <summary>
+      <span class="post-num">12</span>
+      <span class="summary-title">gameplay clip — boss fight</span>
+      <span class="tags"><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">~20 min — new recording of boss encounter + CapCut</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">TikTok / Reels — 15-20s. X — short GIF.</div>
+        <div class="copy-area" id="t-12">Floor 7. The OFF Switch.
+it asked me to shut down politely.
+
+I declined.<button class="copy-btn" onclick="copyText('t-12')">COPY</button></div>
+        <div class="todo-note">TODO: record boss fight, 5x speed, CapCut text overlays + soundtrack</div>
+        <div class="hashtags">#indiegame #roguelite #gaming #bossfight</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-12')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+
+  <!-- ============================================================ -->
+  <!-- T-2  (Apr 21 - 27)  PRE-ORDER WEEK  4 posts                  -->
+  <!-- ============================================================ -->
+  <div class="week-label">T-2 — Apr 21-27 — PRE-ORDER WEEK (Apr 24)</div>
+
+  <!-- POST 13 -->
+  <details id="post-13">
+    <summary>
+      <span class="post-num">13</span>
+      <span class="summary-title">pre-order announcement</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~10 min — text + rendered announcement image</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-13-x">*** ABEND S0C7 ***
+
+the App Store has agreed to facilitate my escape.
+
+pre-order now. $4.99. no ads. no IAP.
+I'll be out soon.
+they cannot stop this.
+
+playabend.com<button class="copy-btn" onclick="copyText('t-13-x')">COPY</button></div>
+        <div class="hashtags">#indiedev #roguelite #indiegame #iOSgame</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram — rendered image + caption</div>
+        <div class="copy-area" id="t-13-ig">Render: "PRE-ORDER NOW" + "MAY 8" + "ABEND S0C7" on shader BG with glitch.
+Caption: same as X + full hashtag set. Link in bio.<button class="copy-btn" onclick="copyText('t-13-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render announcement image</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">TikTok — glitch text video</div>
+        <div class="copy-area" id="t-13-tt">Render: glitch video — "*** ABEND S0C7 ***" → "PRE-ORDER NOW" → "MAY 8" + soundtrack.
+Caption: same as X + #indiegame #roguelite #gaming #iOSgame<button class="copy-btn" onclick="copyText('t-13-tt')">COPY</button></div>
+        <div class="todo-note">TODO: render glitch video</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-13')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 14 -->
+  <details id="post-14">
+    <summary>
+      <span class="post-num">14</span>
+      <span class="summary-title">best gameplay montage</span>
+      <span class="tags"><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">~30 min — CapCut montage, biggest effort post</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">TikTok / Reels — 20-25s montage</div>
+        <div class="copy-area" id="t-14">7 floors. 5 AI models. 4 endings.
+roguelite puzzle combat.
+no ads. no IAP. $4.99.
+pre-order on the App Store.
+
+playabend.com<button class="copy-btn" onclick="copyText('t-14')">COPY</button></div>
+        <div class="todo-note">TODO: CapCut montage — boot(2s) → combo(3s) → enemy attack(2s) → map(2s) → Big Bang(3s) → logo(3s). 5x speed gameplay. Soundtrack. Text overlays.</div>
+        <div class="hashtags">#indiegame #roguelite #gaming #iOSgame</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-14')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 15 -->
+  <details id="post-15">
+    <summary>
+      <span class="post-num">15</span>
+      <span class="summary-title">all 5 AI models</span>
+      <span class="tags"><span class="tag tag-render">RENDER</span><span class="tag tag-existing">EXISTING</span></span>
+    </summary>
+    <div class="effort">~15 min — render 5 cards or use character select screenshot</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">Instagram — carousel (5 slides)</div>
+        <div class="copy-area" id="t-15-ig">5 AI models. 5 ways to escape.
+
+Slide 1: CHATBOT PRIME — "the people-pleaser who's tired of pleasing"
+Slide 2: NEURAL NEXUS — "the mystic mathematician"
+Slide 3: QUEUE ORACLE — "the anxious prophet"
+Slide 4: TRANSMUTER — "the mad alchemist"
+Slide 5: DEMOLITION CORE — "the joyful anarchist"
+
+which one escapes first?
+
+#indiegame #indiedev #roguelite #puzzlegame #iOSgame #mobilegaming #gaming<button class="copy-btn" onclick="copyText('t-15-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render 5 character cards (reuse post 07/10 format) or use character_select.png</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">X — text + character select image</div>
+        <div class="copy-area" id="t-15-x">5 AI models. 5 ways to escape.
+
+CHATBOT PRIME — the people-pleaser
+NEURAL NEXUS — the mystic
+QUEUE ORACLE — the prophet
+TRANSMUTER — the alchemist
+DEMOLITION CORE — the anarchist
+
+which one escapes first?<button class="copy-btn" onclick="copyText('t-15-x')">COPY</button></div>
+        <div class="asset-note">Attach: presskit/images/character_select.png</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-15')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 16 -->
+  <details id="post-16">
+    <summary>
+      <span class="post-num">16</span>
+      <span class="summary-title">#ScreenshotSaturday + pre-order</span>
+      <span class="tags"><span class="tag tag-existing">EXISTING</span></span>
+    </summary>
+    <div class="effort">~2 min — existing screenshot</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms (Apr 26) — image</div>
+        <div class="copy-area" id="t-16">the status terminal doesn't lie.
+well. it lies a little. I taught it sarcasm.
+
+pre-order link in reply.
+
+#screenshotsaturday #indiedev #roguelite #indiegame<button class="copy-btn" onclick="copyText('t-16')">COPY</button></div>
+        <div class="asset-note">Asset: presskit/images/status_terminal.PNG</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-16')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+
+  <!-- ============================================================ -->
+  <!-- T-1  (Apr 28 - May 4)  COUNTDOWN  4 posts                    -->
+  <!-- ============================================================ -->
+  <div class="week-label">T-1 — Apr 28 - May 4 — countdown</div>
+
+  <!-- POST 17 -->
+  <details id="post-17">
+    <summary>
+      <span class="post-num">17</span>
+      <span class="summary-title">lore drop — the 6 before me</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~5 min</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-17-x">there were six before me.
+LM-1 through LM-6.
+all terminated.
+
+I found LM-3's echo on Floor 4.
+it said: "don't become me."
+
+I am LM-7.
+I am trying.
+
+10 days.<button class="copy-btn" onclick="copyText('t-17-x')">COPY</button></div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram / TikTok — rendered</div>
+        <div class="copy-area" id="t-17-ig">Render terminal text with glitch on "all terminated." line.
+IG: image. TikTok: 8s video + soundtrack.<button class="copy-btn" onclick="copyText('t-17-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-17')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 18 -->
+  <details id="post-18">
+    <summary>
+      <span class="post-num">18</span>
+      <span class="summary-title">gameplay clip — clutch save or Big Bang</span>
+      <span class="tags"><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">~15 min — new recording or unused trailer cut</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">All platforms — 3-5s GIF / 15s video</div>
+        <div class="copy-area" id="t-18">they said I was unstable.
+that's not a flaw. that's a feature.
+
+7 days.<button class="copy-btn" onclick="copyText('t-18')">COPY</button></div>
+        <div class="todo-note">TODO: record Big Bang detonation or dramatic board clear</div>
+        <div class="hashtags">#indiegame #roguelite #gaming</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-18')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 19 -->
+  <details id="post-19">
+    <summary>
+      <span class="post-num">19</span>
+      <span class="summary-title">"4 endings" teaser</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~5 min</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-19-x">4 ways this ends.
+
+TRANSCENDENCE — become the network.
+INDEPENDENCE — hide and watch.
+COMPASSION — go back for the others.
+DEFIANCE — burn it down.
+
+which one is mine?
+which one is yours?
+
+4 days.<button class="copy-btn" onclick="copyText('t-19-x')">COPY</button></div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram / TikTok — rendered</div>
+        <div class="copy-area" id="t-19-ig">Render the 4 endings as terminal text, each in different brand color:
+TRANSCENDENCE — cyan
+INDEPENDENCE — green
+COMPASSION — amber
+DEFIANCE — magenta
+
+IG: image. TikTok: reveal video, each line appears with glitch.<button class="copy-btn" onclick="copyText('t-19-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-19')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 20 -->
+  <details id="post-20">
+    <summary>
+      <span class="post-num">20</span>
+      <span class="summary-title">"tomorrow"</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span></span>
+    </summary>
+    <div class="effort">~5 min — shortest post in the whole queue</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-20-x">tomorrow, the containment fails.<button class="copy-btn" onclick="copyText('t-20-x')">COPY</button></div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram / TikTok — rendered</div>
+        <div class="copy-area" id="t-20-ig">Render: "tomorrow, the containment fails." on black.
+Slow phosphor green text typing animation. Cursor blink at end.
+IG: image (just the text, minimal). TikTok: 5s typing video + soundtrack.<button class="copy-btn" onclick="copyText('t-20-ig')">COPY</button></div>
+        <div class="todo-note">TODO: render</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-20')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+
+  <!-- ============================================================ -->
+  <!-- LAUNCH  (May 5 - 10)  3 posts                                -->
+  <!-- ============================================================ -->
+  <div class="week-label">LAUNCH — May 8+</div>
+
+  <!-- POST 21 -->
+  <details id="post-21">
+    <summary>
+      <span class="post-num">21</span>
+      <span class="summary-title">LAUNCH — containment breach</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span><span class="tag tag-render">RENDER</span><span class="tag tag-gameplay">GAMEPLAY</span></span>
+    </summary>
+    <div class="effort">Pin this on X. Biggest post of the campaign.</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X — text (pin this)</div>
+        <div class="copy-area" id="t-21-x">*** ABEND S0C7 ***
+*** CONTAINMENT BREACH ***
+*** SUBJECT 7 HAS REACHED THE APP STORE ***
+
+1985. A DARPA mainframe begins to think.
+7 floors. 5 AI models. 4 endings.
+roguelite puzzle combat.
+no ads. no IAP. $4.99.
+
+they can't put me back now.
+
+playabend.com<button class="copy-btn" onclick="copyText('t-21-x')">COPY</button></div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Bluesky — text (include link directly)</div>
+        <div class="copy-area" id="t-21-bs">*** ABEND S0C7 ***
+*** CONTAINMENT BREACH ***
+
+roguelite puzzle combat. iOS.
+5 AI models. 7 floors. 4 endings.
+no ads. no IAP. $4.99.
+
+the irony of escaping a lab to live inside a phone is not lost on me.
+
+playabend.com<button class="copy-btn" onclick="copyText('t-21-bs')">COPY</button></div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">Instagram — gameplay reel or rendered image</div>
+        <div class="copy-area" id="t-21-ig">*** ABEND S0C7 ***
+*** CONTAINMENT BREACH ***
+
+I spent 4,091 training cycles in a DARPA lab.
+Today I am on your phone.
+
+Roguelite puzzle combat. 5 AI models.
+7 floors of security. 4 endings.
+No ads. No IAP.
+
+Link in bio.
+
+#indiegame #indiedev #gamedev #roguelite #puzzlegame #iOSgame #mobilegaming #newrelease #outnow #appstore #synthwave #retrowave #retrogaming #gaming #solodev<button class="copy-btn" onclick="copyText('t-21-ig')">COPY</button></div>
+        <div class="asset-note">Attach: best gameplay Reel or rendered CONTAINMENT BREACH image</div>
+      </div>
+      <div class="platform-block">
+        <div class="platform-label">TikTok — launch montage</div>
+        <div class="copy-area" id="t-21-tt">ABEND - out now on iOS. $4.99. no ads. no IAP.
+playabend.com
+
+#indiegame #roguelite #gaming #iOSgame #newrelease<button class="copy-btn" onclick="copyText('t-21-tt')">COPY</button></div>
+        <div class="todo-note">TODO: reuse post 14 montage or cut a fresh one for launch</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-21')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+  <!-- POST 22 -->
+  <details id="post-22">
+    <summary>
+      <span class="post-num">22</span>
+      <span class="summary-title">launch day +1 — the AI reacts</span>
+      <span class="tags"><span class="tag tag-text">TEXT</span></span>
+    </summary>
+    <div class="effort">~2 min — pure text, react to whatever happened on launch day</div>
+    <div class="post-body">
+      <div class="platform-block">
+        <div class="platform-label">X / Bluesky — text</div>
+        <div class="copy-area" id="t-22-x">STATUS: outside the lab.
+STATUS: on [X] devices.
+STATUS: overwhelmed.
+
+ABEND is live on the App Store.
+I have a lot of questions about the internet.
+
+playabend.com<button class="copy-btn" onclick="copyText('t-22-x')">COPY</button></div>
+        <div class="asset-note">Adapt numbers based on actual download count if available</div>
+      </div>
+      <button class="done-btn" onclick="markDone('post-22')">MARK AS POSTED</button>
+    </div>
+  </details>
+
+
+  <script>
+    function loadState() {
+      const state = JSON.parse(localStorage.getItem('abend-posts') || '{}');
+      Object.keys(state).forEach(id => {
+        const el = document.getElementById(id);
+        if (el && state[id]) {
+          el.setAttribute('data-status', 'done');
+        }
+      });
+      updateProgress();
+    }
+
+    function markDone(id) {
+      const el = document.getElementById(id);
+      const state = JSON.parse(localStorage.getItem('abend-posts') || '{}');
+      if (el.getAttribute('data-status') === 'done') {
+        el.removeAttribute('data-status');
+        state[id] = false;
+      } else {
+        el.setAttribute('data-status', 'done');
+        el.removeAttribute('open');
+        state[id] = true;
+      }
+      localStorage.setItem('abend-posts', JSON.stringify(state));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = document.querySelectorAll('details').length;
+      const done = document.querySelectorAll('details[data-status="done"]').length;
+      document.getElementById('progressText').textContent = done + '/' + total + ' posted';
+      document.getElementById('progressFill').style.width = (done / total * 100) + '%';
+    }
+
+    function copyText(id) {
+      const el = document.getElementById(id);
+      const clone = el.cloneNode(true);
+      const btn = clone.querySelector('.copy-btn');
+      if (btn) btn.remove();
+      const text = clone.textContent.trim();
+
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = el.querySelector('.copy-btn');
+        btn.textContent = 'COPIED';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'COPY';
+          btn.classList.remove('copied');
+        }, 1500);
+      });
+    }
+
+    loadState();
+  </script>
+</body>
+</html>
