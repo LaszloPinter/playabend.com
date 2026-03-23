@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate OG Image — ABEND</title>
+  <style>
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    canvas {
+      border: 1px solid #333;
+      max-width: 100%;
+      height: auto;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.75rem 2rem;
+      background: #FF0040;
+      color: #fff;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { background: #ff3366; }
+    p { color: #888; margin-top: 1rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>OG Image Preview (1200 &times; 630)</h1>
+  <canvas id="og" width="1200" height="630"></canvas>
+  <button id="download">Download og-image.png</button>
+  <p>Save the downloaded file to <code>images/og-image.png</code></p>
+
+  <script>
+    const canvas = document.getElementById('og');
+    const ctx = canvas.getContext('2d');
+
+    // Load the IBM 3270 font before drawing
+    const font3270 = new FontFace('IBM 3270', "url('fonts/3270-Regular.woff2')");
+    font3270.load().then(f => { document.fonts.add(f); draw(); });
+
+    // --- Grid config (matches grid.js) ---
+    const HORIZON_R = 179, HORIZON_G = 25,  HORIZON_B = 115;
+    const VIEWER_R  = 0,   VIEWER_G  = 153, VIEWER_B  = 179;
+    const HORIZON_Y_FRAC = 0.35;
+    const VERTICAL_LINES = 20;
+    const HORIZONTAL_COUNT = 40;
+
+    const SHAPES = [
+      [[1,1,1,1]],
+      [[1,1],[1,1]],
+      [[0,1,0],[1,1,1]],
+      [[0,1,1],[1,1,0]],
+      [[1,1,0],[0,1,1]],
+      [[1,0],[1,0],[1,1]],
+      [[0,1],[0,1],[1,1]],
+    ];
+    const PIECE_COLORS = [
+      [0, 255, 255],
+      [255, 0, 255],
+      [255, 102, 0],
+      [102, 255, 102],
+      [255, 255, 77],
+      [153, 51, 255],
+      [255, 77, 77],
+    ];
+
+    function rand(min, max) { return min + Math.random() * (max - min); }
+    function randInt(min, max) { return Math.floor(rand(min, max + 1)); }
+
+    function lerpColor(t) {
+      var c = Math.max(0, Math.min(1, t));
+      return [
+        (HORIZON_R + (VIEWER_R - HORIZON_R) * c) | 0,
+        (HORIZON_G + (VIEWER_G - HORIZON_G) * c) | 0,
+        (HORIZON_B + (VIEWER_B - HORIZON_B) * c) | 0,
+      ];
+    }
+
+    function draw() {
+      const W = 1200, H = 630;
+
+      // Dark background
+      ctx.fillStyle = '#0A0A0F';
+      ctx.fillRect(0, 0, W, H);
+
+      // --- Perspective grid (static snapshot of grid.js) ---
+      const horizonPx = H * HORIZON_Y_FRAC;
+      const groundH = H - horizonPx;
+      const vanishX = W * 0.5;
+
+      // Horizontal lines
+      ctx.lineWidth = 1;
+      for (let i = 0; i < HORIZONTAL_COUNT; i++) {
+        let phase = i / HORIZONTAL_COUNT;
+        let perspT = phase * phase;
+        let y = horizonPx + perspT * groundH;
+        let fade = Math.min(1, perspT / 0.12);
+        if (fade < 0.01) continue;
+
+        let rgb = lerpColor(perspT);
+        let isMajor = (i % 5 === 0);
+        let alpha = (isMajor ? 0.35 : 0.12) * fade;
+
+        ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+      }
+
+      // Vertical lines
+      for (let v = -VERTICAL_LINES; v <= VERTICAL_LINES; v++) {
+        let spread = v / VERTICAL_LINES;
+        let bottomX = vanishX + spread * W * 0.9;
+        let isMajorV = (v % 5 === 0);
+        let baseAlpha = isMajorV ? 0.18 : 0.06;
+        let centerFade = 1 - Math.abs(spread) * 0.4;
+        let midRgb = lerpColor(0.5);
+
+        ctx.strokeStyle = `rgba(${midRgb[0]},${midRgb[1]},${midRgb[2]},${(baseAlpha * centerFade).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(vanishX, horizonPx);
+        ctx.lineTo(bottomX, H);
+        ctx.stroke();
+      }
+
+      // Horizon glow
+      let hRgb = lerpColor(0);
+      let hGrad = ctx.createLinearGradient(0, horizonPx - 2, 0, horizonPx + 40);
+      hGrad.addColorStop(0, `rgba(${hRgb[0]},${hRgb[1]},${hRgb[2]}, 0.10)`);
+      hGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = hGrad;
+      ctx.fillRect(0, horizonPx - 2, W, 42);
+
+      ctx.strokeStyle = `rgba(${hRgb[0]},${hRgb[1]},${hRgb[2]}, 0.12)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, horizonPx);
+      ctx.lineTo(W, horizonPx);
+      ctx.stroke();
+
+      // --- Falling tetrominoes (static scatter) ---
+      const BLOCK = 6;
+      // Use seeded positions so regenerating gives the same result
+      let seed = 42;
+      function seededRand() {
+        seed = (seed * 16807 + 0) % 2147483647;
+        return seed / 2147483647;
+      }
+      function sRand(min, max) { return min + seededRand() * (max - min); }
+      function sRandInt(min, max) { return Math.floor(sRand(min, max + 1)); }
+
+      for (let i = 0; i < 14; i++) {
+        let shapeIdx = sRandInt(0, SHAPES.length - 1);
+        let colorIdx = sRandInt(0, PIECE_COLORS.length - 1);
+        let shape = SHAPES[shapeIdx];
+        let color = PIECE_COLORS[colorIdx];
+        let alpha = sRand(0.15, 0.35);
+        let px = sRand(40, W - 40);
+        let py = sRand(20, H - 20);
+        let rot = sRand(0, Math.PI * 2);
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(rot);
+        ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${alpha.toFixed(2)})`;
+        let rows = shape.length, cols = shape[0].length;
+        let ox = -(cols * BLOCK) / 2, oy = -(rows * BLOCK) / 2;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (shape[r][c]) {
+              ctx.fillRect(ox + c * BLOCK, oy + r * BLOCK, BLOCK - 1, BLOCK - 1);
+            }
+          }
+        }
+        ctx.restore();
+      }
+
+      // --- Scanlines overlay ---
+      ctx.fillStyle = 'rgba(255,255,255,0.012)';
+      for (let y = 0; y < H; y += 3) {
+        ctx.fillRect(0, y, W, 1);
+      }
+
+      // --- Vignette ---
+      const vig = ctx.createRadialGradient(W/2, H/2, 150, W/2, H/2, 650);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(1, 'rgba(0,0,0,0.55)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
+
+      // --- Text ---
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // ABEND title — big, red, with glow
+      ctx.font = '120px "IBM 3270"';
+      ctx.fillStyle = '#FF0040';
+      ctx.shadowColor = '#FF0040';
+      ctx.shadowBlur = 40;
+      ctx.fillText('ABEND', W / 2, H / 2 - 30);
+      ctx.shadowBlur = 20;
+      ctx.fillText('ABEND', W / 2, H / 2 - 30);
+      ctx.shadowBlur = 0;
+
+      // Subtitle — green, large enough to read at thumbnail
+      ctx.font = '36px "IBM 3270"';
+      ctx.fillStyle = '#00FF41';
+      ctx.shadowColor = '#00FF41';
+      ctx.shadowBlur = 10;
+      ctx.fillText('Roguelite Puzzle Combat', W / 2, H / 2 + 50);
+      ctx.shadowBlur = 0;
+    }
+
+    document.getElementById('download').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'og-image.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
+</body>
+</html>
