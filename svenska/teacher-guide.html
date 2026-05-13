@@ -113,105 +113,93 @@
 
 <a class="back-link" href="index.html">← Svenska</a>
 <h1>Guide</h1>
-<div class="sub">How to run a shared Swedish dialog drill with a student.</div>
+<div class="sub">A reference for using the Dialog Session page.</div>
 
-<h2>About this site</h2>
-<p>This is a small practice tool focused on the <strong>most common Swedish words and connectives</strong> — prepositions (<em>i / på / vid / hos</em>), possessives (<em>min/mitt/mina, sin/sitt/sina</em>), question words (<em>vem / var / vart / varifrån / vilken</em>), time expressions (<em>för 4 år sedan, i 2 år, sedan 2019, på halv 5</em>), and short situational phrases (café, intro, work, housing, the doctor, the airport, etc.).</p>
-<p>The intent is <strong>speed and accuracy on basics</strong>, not vocabulary expansion. Students who already understand a lot of Swedish but stumble on the connective grammar can use it to drill those atoms until they come out automatically.</p>
-
-<h2>The two pages</h2>
-<div class="card">
-  <h3><a href="database.html">Database</a> — phrase drill</h3>
-  <p>Roughly 375 phrases across 21 categories (prepositions, possessives, modal verbs, common verbs with principal parts, café phrases, etc.). Click any card to reveal the English and Hungarian translation. Search box and category filter at the top. Intended for solo practice.</p>
-</div>
-<div class="card">
-  <h3><a href="dialog.html">Dialog Session</a> — generated dialogs</h3>
-  <p>About 4,600 unique short dialogs (3–6 lines), generated from ~40 templates × typed vocabulary pools. Two speakers, A and B. Designed for a teacher and student to use together during a lesson — see below.</p>
-</div>
-
-<h2>How a shared session works</h2>
-<p>A student opens the <a href="index.html">landing page</a>, enters the session passcode, clicks <strong>Start session</strong>, and shares the resulting student link with the teacher (it's auto-copied to the clipboard). When the teacher opens that link, both browsers stay in sync: the teacher controls what gets revealed, and the student sees only what the teacher has revealed.</p>
-
-<h3>The two roles</h3>
+<h2>Roles</h2>
 <div class="ctrl-row">
   <span class="pill a">Teacher</span>
-  <span class="desc">Sees the entire dialog. Drives the session: presses Next, taps lines to reveal, toggles modes.</span>
+  <span class="desc">Sees the entire dialog. Controls what the student sees.</span>
 </div>
 <div class="ctrl-row">
   <span class="pill b">Student</span>
-  <span class="desc">Sees only the lines the teacher has revealed. Their own lines may be visible or hidden depending on the active mode.</span>
+  <span class="desc">Sees only what the teacher reveals.</span>
 </div>
 
-<h3>What the student sees in default mode</h3>
-<p>By default, the student sees their own lines (whichever speaker A or B is assigned to them) in plain English. The teacher's lines appear as placeholder bubbles: <code>···</code>. The student produces the Swedish for their line out loud; the teacher then taps the line to reveal the Swedish translation so the student can verify.</p>
+<h2>Default visibility</h2>
+<p>The student sees their own lines (whichever speaker — A or B — is assigned to them) in plain English. The other speaker's lines appear as placeholder bubbles. The Swedish translations are hidden on both sides until the teacher reveals them.</p>
 
 <div class="demo">
   <div class="row">
     <div class="bub a hidden"></div>
-    <div class="bub sv">(hidden until the teacher taps)</div>
+    <div class="bub sv">(Swedish hidden)</div>
   </div>
   <div class="row">
     <div class="bub b">Yes, I'm making carrot cake.</div>
-    <div class="bub sv">(hidden until the teacher taps)</div>
+    <div class="bub sv">(Swedish hidden)</div>
   </div>
   <div class="row">
     <div class="bub a hidden"></div>
-    <div class="bub sv">(hidden until the teacher taps)</div>
+    <div class="bub sv">(Swedish hidden)</div>
   </div>
   <div class="row">
     <div class="bub b">Thanks!</div>
-    <div class="bub sv">(hidden until the teacher taps)</div>
+    <div class="bub sv">(Swedish hidden)</div>
   </div>
 </div>
-<p style="font-size:12.5px; color:var(--ink-dim);">↑ The student sees their own lines (green, speaker B in this example) and placeholder bubbles for the teacher's lines. The Swedish translation is hidden on both sides until the teacher taps to reveal.</p>
 
-<h3>Teacher controls</h3>
+<h2>Controls</h2>
 <div class="ctrl-row">
-  <span class="name">Tap any line</span>
-  <span class="desc">Reveals both English and Swedish of that line — for both sides. Tap again to hide.</span>
+  <span class="name">Tap coloured EN bubble</span>
+  <span class="desc">Toggles whether the student sees the English text for that line.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">Tap grey SV bubble</span>
+  <span class="desc">Toggles whether the student sees the Swedish translation for that line.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">Reveal next →&nbsp;&nbsp;(or space)</span>
+  <span class="desc">Steps through the dialog linearly: line 1 EN → line 1 SV → line 2 EN → …</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">shift + space</span>
+  <span class="desc">Step back — hides the most-recently-revealed bubble.</span>
 </div>
 <div class="ctrl-row">
   <span class="name">Reveal all / Hide all</span>
-  <span class="desc">Flips every line at once. Useful for stepping through the full dialog after the student has attempted it.</span>
+  <span class="desc">Flips every line at once.</span>
 </div>
 <div class="ctrl-row">
   <span class="name">Show all to student</span>
-  <span class="desc">Master override — everything is visible to the student regardless of per-line state. Use for review / discussion.</span>
+  <span class="desc">Override — everything is visible to the student regardless of per-line state.</span>
 </div>
 <div class="ctrl-row">
   <span class="name">Strict</span>
-  <span class="desc">Hides the student's own lines too. The student sees only what the teacher reveals — including the lines they're meant to say. Harder mode; also works as listening practice.</span>
+  <span class="desc">Hides the student's own lines too. The student sees only what the teacher reveals.</span>
 </div>
 <div class="ctrl-row">
   <span class="name">Student speaks as: A / B</span>
-  <span class="desc">Choose which speaker (A in blue or B in green) is the student. Default is B (the responder). Switch to A if the student should initiate.</span>
+  <span class="desc">Assigns which speaker (A in blue or B in green) is the student.</span>
 </div>
 <div class="ctrl-row">
   <span class="name">Next dialog →</span>
-  <span class="desc">Generates a new random dialog from one of ~40 templates. Both views jump together.</span>
+  <span class="desc">Generates a new random dialog.</span>
 </div>
 <div class="ctrl-row">
   <span class="name">← Prev</span>
-  <span class="desc">Returns to the previous dialog. Useful for review.</span>
+  <span class="desc">Returns to the previous dialog.</span>
 </div>
 
-<h2>Recommended flow during a lesson</h2>
+<h2>Suggested flow</h2>
 <ol>
-  <li>The student opens the landing page, enters the passcode, clicks Start, and shares the student link with the teacher.</li>
-  <li>The teacher opens the link. Both views connect — the top bar should show <span style="color:#10b981">●&nbsp;connected</span>.</li>
-  <li>A random dialog appears. The student's lines are coloured (green for B, blue for A); the teacher's lines appear as <code>···</code> placeholders on the student's screen.</li>
-  <li>The teacher reads their line out loud, then taps it to reveal it on the student's screen.</li>
-  <li>The student responds in Swedish (their next line). The teacher taps that line to reveal the model Swedish on both screens for comparison.</li>
-  <li>When the dialog is finished or the student is stuck, the teacher taps <strong>Reveal all</strong> to discuss the full text.</li>
-  <li>Tap <strong>Next dialog</strong> to continue. The goal is brisk pace.</li>
+  <li>A random dialog appears.</li>
+  <li>The teacher reads their line out loud and taps it to reveal it on the student's screen.</li>
+  <li>The student responds in Swedish. The teacher taps to reveal the model Swedish for comparison.</li>
+  <li>Continue line by line. When done, tap <strong>Reveal all</strong> for review, then <strong>Next dialog</strong>.</li>
 </ol>
 
 <div class="hl">
-  <strong>Note:</strong> the system is designed for muscle-memory drilling, not realism. Some dialogs will be lightly absurd (<em>"Want to try the coffee?"</em>, <em>"We bought it last Friday"</em>). That's intentional — the aim is for the student to produce the right preposition, pronoun, and verb form quickly and correctly, not to construct logically perfect conversations.
+  Some dialogs are intentionally a bit absurd. The aim is grammar reflex, not realism.
 </div>
-
-<h2>Errors</h2>
-<p>If the page displays an error code (<code>Code-E01</code>, etc.), the most common cause is a network blip; refreshing usually resolves it. Persistent errors should be reported to whoever maintains the site.</p>
 
 </body>
 </html>
