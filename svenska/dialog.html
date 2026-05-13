@@ -1,0 +1,2334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dialog Session — Svenska</title>
+
+<!-- Firebase SDK (compat) — loaded lazily; harmless if you never use shared sessions.
+     Drop these script tags if you don't want any external CDN load. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1e2330;
+    --ink: #e8ecf3;
+    --ink-dim: #98a2b3;
+    --border: #262c3a;
+    --a: #2563eb;       /* speaker A bubble */
+    --a-ink: #ffffff;
+    --b: #047857;       /* speaker B bubble */
+    --b-ink: #ffffff;
+    --sv: #2a3142;
+    --sv-ink: #cfe8ff;
+    --warn: #f59e0b;
+    --accent-2: #93c5fd;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --panel-2: #f1f3f8;
+      --ink: #131722;
+      --ink-dim: #555c6a;
+      --border: #e5e8ef;
+      --a: #2563eb;
+      --a-ink: #ffffff;
+      --b: #047857;
+      --b-ink: #ffffff;
+      --sv: #eef3fb;
+      --sv-ink: #1d4ed8;
+      --accent-2: #1d4ed8;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; }
+  body { padding: 16px; max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--ink-dim); font-size: 13px; margin-bottom: 16px; }
+  .site-title { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; font-weight: 600; }
+  .nav {
+    display: inline-flex; gap: 2px; margin-bottom: 18px;
+    padding: 3px; background: var(--panel); border: 1px solid var(--border); border-radius: 999px;
+  }
+  .nav a {
+    padding: 6px 14px; border-radius: 999px;
+    text-decoration: none; color: var(--ink-dim); font-size: 13px;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .nav a:hover { color: var(--ink); background: var(--panel-2); }
+  .nav a.active { background: var(--accent-2); color: white; }
+  .nav a.active:hover { background: var(--accent-2); }
+
+  .toolbar {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px; position: sticky; top: 8px; z-index: 10;
+  }
+  button {
+    background: var(--panel-2); color: var(--ink); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer;
+  }
+  button:hover:not(:disabled) { background: var(--border); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.primary { background: var(--accent-2); color: white; border-color: transparent; }
+  .seed { color: var(--ink-dim); font-size: 12px; margin-left: auto; font-family: ui-monospace, Menlo, monospace; }
+
+  .dialog {
+    margin-top: 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: stretch;
+    cursor: pointer;
+  }
+  .bubble {
+    padding: 10px 14px;
+    border-radius: 10px;
+    line-height: 1.4;
+    font-size: 15px;
+    word-wrap: break-word;
+    display: block;
+    min-height: 44px;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+  }
+  .bubble.en {
+    user-select: none;
+    color: white;
+  }
+  .bubble.en.a { background: var(--a); }
+  .bubble.en.b { background: var(--b); }
+
+  /* Muted EN bubble — visible only to the teacher (or to the student
+     for lines they don't yet see). Grey fill, speaker-coloured border. */
+  .bubble.en.muted {
+    background: var(--panel-2);
+    color: var(--ink);
+  }
+  .bubble.en.muted.a { border-color: var(--a); }
+  .bubble.en.muted.b { border-color: var(--b); }
+  .bubble.en.muted.a .who { background: var(--a); color: white; }
+  .bubble.en.muted.b .who { background: var(--b); color: white; }
+  .who {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: rgba(255,255,255,0.22);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 10px;
+    vertical-align: 2px;
+  }
+  .bubble.sv {
+    background: var(--sv);
+    color: transparent;
+    font-style: italic;
+    transition: color 0.12s ease;
+  }
+  .row.revealed .bubble.sv { color: var(--sv-ink); }
+
+  .meta {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    font-size: 12px;
+    color: var(--ink-dim);
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .meta .tag {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 999px;
+  }
+
+  footer { color: var(--ink-dim); font-size: 12px; margin: 24px 0 8px; text-align: center; }
+  kbd { background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+
+  @media (max-width: 640px) {
+    .row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* ---- Session bar (shared mode) ---- */
+  .session-bar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .role-badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+  }
+  .role-badge.teacher { background: var(--a); }
+  .role-badge.student { background: var(--b); }
+  .role-badge.single  { background: var(--ink-dim); }
+  .session-bar code { background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+  .conn { margin-left: auto; color: var(--ink-dim); font-size: 12px; }
+  .conn.connected::before { content: "● "; color: #10b981; }
+  .conn.connecting::before { content: "● "; color: #f59e0b; }
+  .conn.offline::before { content: "● "; color: #ef4444; }
+
+  /* ---- Teacher controls ---- */
+  .teacher-controls {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 13px;
+  }
+  .teacher-controls label { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+  .teacher-controls input[type="checkbox"] { accent-color: var(--accent-2); }
+  .teacher-controls select { background: var(--panel-2); color: var(--ink); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; }
+
+  /* ---- Placeholder bubble (English text hidden from student) ---- */
+  .bubble.en.placeholder .text { visibility: hidden; }
+  .bubble.en.placeholder::after {
+    content: "···";
+    font-size: 18px;
+    letter-spacing: 8px;
+    color: var(--ink-dim);
+    margin-left: -4px;
+  }
+
+  /* SV reveal — text is transparent until the bubble has .revealed */
+  .bubble.sv.revealed { color: var(--sv-ink); }
+
+  /* Indicator (teacher-only): green border on SV bubbles currently
+     visible to the student. (EN bubbles instead change their fill —
+     see .bubble.en.muted above.) */
+  .bubble.sv.revealed-by-student-view {
+    border-color: #10b981;
+  }
+  /* Per-bubble pointer cursor when the teacher can click it */
+  .role-teacher .bubble.en,
+  .role-teacher .bubble.sv,
+  .role-single .bubble.en,
+  .role-single .bubble.sv { cursor: pointer; }
+  .role-student .bubble.en,
+  .role-student .bubble.sv { cursor: default; }
+
+  /* ---- Wizard landing ---- */
+  .wizard-card {
+    max-width: 480px;
+    margin: 32px auto;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .wizard-card h2 { margin: 0 0 6px; font-size: 22px; }
+  .wizard-card .lead { color: var(--ink-dim); margin: 0 0 20px; font-size: 14px; line-height: 1.5; }
+  .wizard-card label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 14px;
+    margin-bottom: 4px;
+  }
+  .wizard-card input[type="text"], .wizard-card input[type="password"] {
+    width: 100%;
+    background: var(--panel-2);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .wizard-card input:focus { border-color: var(--accent-2); outline: none; }
+  .wizard-card .help { font-size: 12px; color: var(--ink-dim); margin-top: 4px; }
+  .wizard-card .row { display: flex; gap: 8px; }
+  .wizard-card button.primary {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .wizard-divider {
+    text-align: center;
+    color: var(--ink-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 28px 0 12px;
+    position: relative;
+  }
+  .wizard-divider::before, .wizard-divider::after {
+    content: ""; position: absolute; top: 50%; height: 1px; background: var(--border);
+    width: calc(50% - 60px);
+  }
+  .wizard-divider::before { left: 0; }
+  .wizard-divider::after { right: 0; }
+  .wizard-card .error {
+    background: rgba(239,68,68,0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239,68,68,0.4);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  @media (prefers-color-scheme: light) {
+    .wizard-card .error { color: #b91c1c; background: rgba(239,68,68,0.08); }
+  }
+  .wizard-card .skip-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-decoration: none;
+  }
+  .wizard-card .skip-link:hover { color: var(--ink); text-decoration: underline; }
+  .wizard-card .regen {
+    background: transparent;
+    border: 0;
+    color: var(--accent-2);
+    font-size: 12px;
+    padding: 2px 0;
+    cursor: pointer;
+    margin-top: 2px;
+  }
+  .wizard-card .regen:hover { text-decoration: underline; }
+
+  /* ---- Setup notice (Firebase not configured) ---- */
+  .setup-notice {
+    background: #422006;
+    color: #fde68a;
+    border: 1px solid #b45309;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .setup-notice a { color: #fde68a; }
+</style>
+</head>
+<body>
+
+<div class="site-title">Svenska</div>
+<nav class="nav">
+  <a href="index.html">Database</a>
+  <a href="dialog.html" class="active">Dialog Session</a>
+  <a href="teacher-guide.html">Guide</a>
+</nav>
+<h1>Dialog Session</h1>
+<div class="sub">Speaker <span style="color:var(--a)">A</span> and <span style="color:var(--b)">B</span> stack vertically. Tap a coloured bubble to reveal the English; tap a grey bubble to reveal the Swedish. Or use <b>Reveal next →</b> (or <kbd>space</kbd>) to step through.</div>
+
+<!-- WIZARD: shown when Firebase is configured but no session is in URL -->
+<div id="wizard" hidden>
+  <div class="wizard-card">
+    <h2>Start a session</h2>
+    <p class="lead">Create a shared session between a teacher and a student. Both sides see the same dialogs in real time; the teacher controls reveals.</p>
+
+    <label for="wiz-session-id">Session ID</label>
+    <input type="text" id="wiz-session-id" autocomplete="off">
+    <button type="button" class="regen" id="wiz-regen">↻ Generate new</button>
+    <div class="help">Any string works. Pick something hard to guess.</div>
+
+    <label for="wiz-passcode">Passcode</label>
+    <input type="password" id="wiz-passcode" autocomplete="off">
+    <div class="help">The shared passcode for this site.</div>
+
+    <button id="wiz-start" class="primary">Start session</button>
+    <div id="wiz-error" class="error" hidden></div>
+
+    <div class="wizard-divider">or join existing</div>
+
+    <label for="wiz-join-id">Existing session ID</label>
+    <input type="text" id="wiz-join-id" autocomplete="off" placeholder="e.g. lesson-20260513-x7p2">
+    <div class="row" style="margin-top:10px;">
+      <button id="wiz-join-teacher" style="flex:1;">Open as teacher</button>
+      <button id="wiz-join-student" style="flex:1;">Open as student</button>
+    </div>
+
+    <a href="#" class="skip-link" id="wiz-skip">Skip — practice solo (single user)</a>
+  </div>
+</div>
+
+<!-- APP: everything below shows once a session is chosen (or in single-user mode) -->
+<div id="app" hidden>
+
+<div id="setup-notice" class="setup-notice" hidden></div>
+
+<div id="session-bar" class="session-bar"></div>
+
+<div class="toolbar">
+  <button id="prev">← Prev</button>
+  <button id="replay">Replay</button>
+  <button id="reveal-all">Reveal all</button>
+  <button id="hide-all">Hide all</button>
+  <button id="reveal-next">Reveal next →</button>
+  <button id="next" class="primary">Next dialog →</button>
+  <span class="seed" id="seed"></span>
+</div>
+
+<div id="teacher-controls" class="teacher-controls" hidden>
+  <label><input type="checkbox" id="show-all-toggle"> Show all to student</label>
+  <label><input type="checkbox" id="strict-toggle"> Strict (hide student lines too)</label>
+  <label>Student speaks as
+    <select id="student-speaks">
+      <option value="A">A</option>
+      <option value="B" selected>B</option>
+    </select>
+  </label>
+  <button id="copy-link">Copy student link</button>
+  <span id="copy-status" style="color:var(--ink-dim);font-size:12px;"></span>
+</div>
+
+<div class="dialog" id="dialog"></div>
+
+<div class="meta" id="meta"></div>
+
+<footer>Press <kbd>space</kbd> to reveal next, <kbd>shift</kbd>+<kbd>space</kbd> to step back, <kbd>→</kbd>/<kbd>←</kbd> for next/prev dialog</footer>
+
+</div><!-- /#app -->
+
+<script>
+"use strict";
+
+// =====================================================================
+// POOLS — every entry carries pre-baked grammar forms so templates
+// never have to compose Swedish on the fly. Add entries freely; just
+// make sure each entry has the fields the template expects.
+// =====================================================================
+
+const POOLS = {
+
+  // ---- FOOD (countable + uncountable). ----
+  // Fields:
+  //   en_indef / sv_indef   = "an apple" / "ett äpple"
+  //   en_def   / sv_def     = "the apple" / "äpplet"
+  //   en_likes / sv_likes   = how it appears after "I like ..." (plural/uncount)
+  //   en_pron  / sv_pron    = "it" / "den" or "det"
+  //   En_pron  / Sv_pron    = capitalized for sentence-start
+  //   gender                = "en" | "ett"
+  food: [
+    { en_indef:"a banana", en_def:"the banana", sv_indef:"en banan", sv_def:"bananen",
+      en_likes:"bananas", sv_likes:"bananer", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"an orange", en_def:"the orange", sv_indef:"en apelsin", sv_def:"apelsinen",
+      en_likes:"oranges", sv_likes:"apelsiner", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"an apple", en_def:"the apple", sv_indef:"ett äpple", sv_def:"äpplet",
+      en_likes:"apples", sv_likes:"äpplen", en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det", gender:"ett" },
+    { en_indef:"a pizza", en_def:"the pizza", sv_indef:"en pizza", sv_def:"pizzan",
+      en_likes:"pizza", sv_likes:"pizza", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a hamburger", en_def:"the hamburger", sv_indef:"en hamburgare", sv_def:"hamburgaren",
+      en_likes:"hamburgers", sv_likes:"hamburgare", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a piece of carrot cake", en_def:"the carrot cake", sv_indef:"en bit morotskaka", sv_def:"morotskakan",
+      en_likes:"carrot cake", sv_likes:"morotskaka", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a piece of kladdkaka", en_def:"the kladdkaka", sv_indef:"en bit kladdkaka", sv_def:"kladdkakan",
+      en_likes:"kladdkaka", sv_likes:"kladdkaka", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a sandwich", en_def:"the sandwich", sv_indef:"en smörgås", sv_def:"smörgåsen",
+      en_likes:"sandwiches", sv_likes:"smörgåsar", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"an ice cream", en_def:"the ice cream", sv_indef:"en glass", sv_def:"glassen",
+      en_likes:"ice cream", sv_likes:"glass", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a coffee", en_def:"the coffee", sv_indef:"en kaffe", sv_def:"kaffet",
+      en_likes:"coffee", sv_likes:"kaffe", en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det", gender:"ett" },
+    { en_indef:"a tea", en_def:"the tea", sv_indef:"ett te", sv_def:"teet",
+      en_likes:"tea", sv_likes:"te", en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det", gender:"ett" },
+    { en_indef:"a salad", en_def:"the salad", sv_indef:"en sallad", sv_def:"salladen",
+      en_likes:"salad", sv_likes:"sallad", en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+  ],
+
+  // ---- PLACE ----
+  // Fields:
+  //   en_indef/sv_indef, en_def/sv_def
+  //   at_en/at_sv   = the natural "at/in/on" phrase ("at the office" / "på kontoret")
+  //   to_en/to_sv   = "to the office" / "till kontoret"
+  //   from_en/from_sv = "from the office" / "från kontoret"
+  //   gender, sv_pron, Sv_pron
+  place: [
+    { en_indef:"an office", en_def:"the office", sv_indef:"ett kontor", sv_def:"kontoret",
+      at_en:"at the office", at_sv:"på kontoret", to_en:"to the office", to_sv:"till kontoret", from_en:"from the office", from_sv:"från kontoret",
+      gender:"ett", sv_pron:"det", Sv_pron:"Det", is_business:true },
+    { en_indef:"a kitchen", en_def:"the kitchen", sv_indef:"ett kök", sv_def:"köket",
+      at_en:"in the kitchen", at_sv:"i köket", to_en:"to the kitchen", to_sv:"till köket", from_en:"from the kitchen", from_sv:"från köket",
+      gender:"ett", sv_pron:"det", Sv_pron:"Det" },
+    { en_indef:"a café", en_def:"the café", sv_indef:"ett café", sv_def:"caféet",
+      at_en:"at the café", at_sv:"på caféet", to_en:"to the café", to_sv:"till caféet", from_en:"from the café", from_sv:"från caféet",
+      gender:"ett", sv_pron:"det", Sv_pron:"Det", is_business:true },
+    { en_indef:"a hospital", en_def:"the hospital", sv_indef:"ett sjukhus", sv_def:"sjukhuset",
+      at_en:"at the hospital", at_sv:"på sjukhuset", to_en:"to the hospital", to_sv:"till sjukhuset", from_en:"from the hospital", from_sv:"från sjukhuset",
+      gender:"ett", sv_pron:"det", Sv_pron:"Det", is_business:true },
+    { en_indef:"a meeting room", en_def:"the meeting room", sv_indef:"ett mötesrum", sv_def:"mötesrummet",
+      at_en:"in the meeting room", at_sv:"i mötesrummet", to_en:"to the meeting room", to_sv:"till mötesrummet", from_en:"from the meeting room", from_sv:"från mötesrummet",
+      gender:"ett", sv_pron:"det", Sv_pron:"Det" },
+    { en_indef:"an airport", en_def:"the airport", sv_indef:"en flygplats", sv_def:"flygplatsen",
+      at_en:"at the airport", at_sv:"på flygplatsen", to_en:"to the airport", to_sv:"till flygplatsen", from_en:"from the airport", from_sv:"från flygplatsen",
+      gender:"en", sv_pron:"den", Sv_pron:"Den", is_business:true },
+    { en_indef:"a store", en_def:"the store", sv_indef:"en affär", sv_def:"affären",
+      at_en:"at the store", at_sv:"i affären", to_en:"to the store", to_sv:"till affären", from_en:"from the store", from_sv:"från affären",
+      gender:"en", sv_pron:"den", Sv_pron:"Den", is_business:true },
+    { en_indef:"a bus stop", en_def:"the bus stop", sv_indef:"en busshållplats", sv_def:"busshållplatsen",
+      at_en:"at the bus stop", at_sv:"vid busshållplatsen", to_en:"to the bus stop", to_sv:"till busshållplatsen", from_en:"from the bus stop", from_sv:"från busshållplatsen",
+      gender:"en", sv_pron:"den", Sv_pron:"Den" },
+    { en_indef:"a gym", en_def:"the gym", sv_indef:"ett gym", sv_def:"gymmet",
+      at_en:"at the gym", at_sv:"på gymmet", to_en:"to the gym", to_sv:"till gymmet", from_en:"from the gym", from_sv:"från gymmet",
+      gender:"ett", sv_pron:"det", Sv_pron:"Det", is_business:true },
+    { en_indef:"a library", en_def:"the library", sv_indef:"ett bibliotek", sv_def:"biblioteket",
+      at_en:"at the library", at_sv:"på biblioteket", to_en:"to the library", to_sv:"till biblioteket", from_en:"from the library", from_sv:"från biblioteket",
+      gender:"ett", sv_pron:"det", Sv_pron:"Det", is_business:true },
+    { en_indef:"a park", en_def:"the park", sv_indef:"en park", sv_def:"parken",
+      at_en:"in the park", at_sv:"i parken", to_en:"to the park", to_sv:"till parken", from_en:"from the park", from_sv:"från parken",
+      gender:"en", sv_pron:"den", Sv_pron:"Den" },
+    { en_indef:"a doctor", en_def:"the doctor", sv_indef:"en läkare", sv_def:"läkaren",
+      at_en:"at the doctor's", at_sv:"hos läkaren", to_en:"to the doctor", to_sv:"till läkaren", from_en:"from the doctor", from_sv:"från läkaren",
+      gender:"en", sv_pron:"den", Sv_pron:"Den" },
+  ],
+
+  // ---- OBJECT ----
+  // Fields like food, plus en_mine/sv_mine ("mine" / "min" or "mitt"),
+  // and en_my/sv_my ("my car" / "min bil") which uses the *naked* stem.
+  object: [
+    { en_indef:"a car", en_def:"the car", sv_indef:"en bil", sv_def:"bilen",
+      en_my:"my car", sv_my:"min bil", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a book", en_def:"the book", sv_indef:"en bok", sv_def:"boken",
+      en_my:"my book", sv_my:"min bok", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a key", en_def:"the key", sv_indef:"en nyckel", sv_def:"nyckeln",
+      en_my:"my key", sv_my:"min nyckel", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a phone", en_def:"the phone", sv_indef:"en telefon", sv_def:"telefonen",
+      en_my:"my phone", sv_my:"min telefon", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a bag", en_def:"the bag", sv_indef:"en väska", sv_def:"väskan",
+      en_my:"my bag", sv_my:"min väska", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a jacket", en_def:"the jacket", sv_indef:"en jacka", sv_def:"jackan",
+      en_my:"my jacket", sv_my:"min jacka", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a package", en_def:"the package", sv_indef:"ett paket", sv_def:"paketet",
+      en_my:"my package", sv_my:"mitt paket", en_mine:"mine", sv_mine:"mitt",
+      en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det", gender:"ett" },
+    { en_indef:"a document", en_def:"the document", sv_indef:"ett dokument", sv_def:"dokumentet",
+      en_my:"my document", sv_my:"mitt dokument", en_mine:"mine", sv_mine:"mitt",
+      en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det", gender:"ett" },
+    { en_indef:"a computer", en_def:"the computer", sv_indef:"en dator", sv_def:"datorn",
+      en_my:"my computer", sv_my:"min dator", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a wallet", en_def:"the wallet", sv_indef:"en plånbok", sv_def:"plånboken",
+      en_my:"my wallet", sv_my:"min plånbok", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a charger", en_def:"the charger", sv_indef:"en laddare", sv_def:"laddaren",
+      en_my:"my charger", sv_my:"min laddare", en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den", gender:"en" },
+    { en_indef:"a glass", en_def:"the glass", sv_indef:"ett glas", sv_def:"glaset",
+      en_my:"my glass", sv_my:"mitt glas", en_mine:"mine", sv_mine:"mitt",
+      en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det", gender:"ett" },
+  ],
+
+  // ---- LOCATION-INSIDE-A-PLACE — small things found at a place ----
+  // Used for "where is X? on the Y" / "next to Y". Pre-baked prepositional phrases.
+  furniture: [
+    { en_on:"on the table",       sv_on:"på bordet" },
+    { en_on:"on the shelf",       sv_on:"på hyllan" },
+    { en_on:"on the floor",       sv_on:"på golvet" },
+    { en_on:"in the fridge",      sv_on:"i kylen" },
+    { en_on:"in the microwave",   sv_on:"i mikron" },
+    { en_on:"in the oven",        sv_on:"i ugnen" },
+    { en_on:"in the box",         sv_on:"i lådan" },
+    { en_on:"in the drawer",      sv_on:"i lådan" },
+    { en_on:"on the desk",        sv_on:"på skrivbordet" },
+    { en_on:"under the bed",      sv_on:"under sängen" },
+    { en_on:"behind the door",    sv_on:"bakom dörren" },
+    { en_on:"next to the window", sv_on:"bredvid fönstret" },
+  ],
+
+  // ---- ACTIVITY (for "do you like X-ing?") ----
+  activity: [
+    { en_ing:"swimming",              sv_ing:"att simma" },
+    { en_ing:"dancing",               sv_ing:"att dansa" },
+    { en_ing:"driving",               sv_ing:"att köra bil" },
+    { en_ing:"running",               sv_ing:"att springa" },
+    { en_ing:"reading",               sv_ing:"att läsa" },
+    { en_ing:"cooking",               sv_ing:"att laga mat" },
+    { en_ing:"walking",               sv_ing:"att gå" },
+    { en_ing:"hiking",                sv_ing:"att vandra" },
+    { en_ing:"skiing",                sv_ing:"att åka skidor" },
+    { en_ing:"sleeping in",           sv_ing:"att sova länge" },
+    { en_ing:"swimming in the sea",   sv_ing:"att bada i havet" },
+    { en_ing:"watching movies",       sv_ing:"att titta på film" },
+  ],
+
+  // ---- TIME (general — both past + future) ----
+  time: [
+    { en:"today",            sv:"idag" },
+    { en:"yesterday",        sv:"igår" },
+    { en:"tomorrow",         sv:"imorgon" },
+    { en:"on Monday",        sv:"på måndag" },
+    { en:"on Tuesday",       sv:"på tisdag" },
+    { en:"last Monday",      sv:"i måndags" },
+    { en:"last Friday",      sv:"i fredags" },
+    { en:"this evening",     sv:"ikväll" },
+    { en:"this morning",     sv:"i morse" },
+    { en:"last week",        sv:"förra veckan" },
+    { en:"next week",        sv:"nästa vecka" },
+    { en:"two hours ago",    sv:"för 2 timmar sedan" },
+    { en:"a week ago",       sv:"för en vecka sedan" },
+  ],
+
+  // ---- PAST TIME (use in templates whose verb is in past/perfect) ----
+  past_time: [
+    { en:"yesterday",        sv:"igår" },
+    { en:"this morning",     sv:"i morse" },
+    { en:"last Monday",      sv:"i måndags" },
+    { en:"last Friday",      sv:"i fredags" },
+    { en:"last week",        sv:"förra veckan" },
+    { en:"two hours ago",    sv:"för 2 timmar sedan" },
+    { en:"a week ago",       sv:"för en vecka sedan" },
+    { en:"a few days ago",   sv:"för några dagar sedan" },
+  ],
+
+  // ---- FUTURE TIME (use in templates with future/plan verbs) ----
+  future_time: [
+    { en:"tomorrow",         sv:"imorgon" },
+    { en:"next week",        sv:"nästa vecka" },
+    { en:"in an hour",       sv:"om en timme" },
+    { en:"in 10 minutes",    sv:"om 10 minuter" },
+    { en:"this evening",     sv:"ikväll" },
+    { en:"on Monday",        sv:"på måndag" },
+  ],
+
+  // ---- CLOCK TIME ----
+  clock: [
+    { en:"at 8",               sv:"klockan 8" },
+    { en:"at 9",               sv:"klockan 9" },
+    { en:"at 10",              sv:"klockan 10" },
+    { en:"at 2",               sv:"klockan 2" },
+    { en:"at half past 3",     sv:"klockan halv 4" },
+    { en:"at half past 4",     sv:"klockan halv 5" },
+    { en:"at a quarter past 5",sv:"klockan kvart över 5" },
+    { en:"at a quarter to 6",  sv:"klockan kvart i 6" },
+    { en:"around 5",           sv:"vid 5-tiden" },
+    { en:"in an hour",         sv:"om en timme" },
+    { en:"in 10 minutes",      sv:"om 10 minuter" },
+  ],
+
+  // ---- ORDINAL FLOOR (for "what floor do you live on") ----
+  floor: [
+    { en:"first floor",  sv:"första våningen" },
+    { en:"second floor", sv:"andra våningen" },
+    { en:"third floor",  sv:"tredje våningen" },
+    { en:"fourth floor", sv:"fjärde våningen" },
+    { en:"fifth floor",  sv:"femte våningen" },
+    { en:"sixth floor",  sv:"sjätte våningen" },
+  ],
+
+  // ---- COUNTRY ----
+  country: [
+    { en:"Hungary",        sv:"Ungern" },
+    { en:"Germany",        sv:"Tyskland" },
+    { en:"Poland",         sv:"Polen" },
+    { en:"Italy",          sv:"Italien" },
+    { en:"Spain",          sv:"Spanien" },
+    { en:"France",         sv:"Frankrike" },
+    { en:"the Netherlands",sv:"Nederländerna" },
+    { en:"Austria",        sv:"Österrike" },
+  ],
+
+  year: [
+    { en:"2019", sv:"2019" },
+    { en:"2020", sv:"2020" },
+    { en:"2021", sv:"2021" },
+    { en:"2022", sv:"2022" },
+    { en:"2023", sv:"2023" },
+  ],
+
+  // years_count: count of years used after "for X years"
+  years_count: [
+    { en:"3", sv:"3" },
+    { en:"4", sv:"4" },
+    { en:"5", sv:"5" },
+    { en:"6", sv:"6" },
+    { en:"10", sv:"10" },
+  ],
+
+  // ---- COLORED THING — pre-baked "den där gröna bilen" patterns. ----
+  // Within one dialog, c and c2 are restricted to the SAME `category`
+  // (see demonstrative-grammar template's `sameCategory:["c","c2"]`),
+  // so the contrast stays sensible (red bag vs. blue bag, not bag vs. house).
+  // To add another color-variant: copy an entry and only change en_def/sv_def,
+  // en_that/sv_that. The other fields (mine/pron/is_new/quite_new/we_bought/
+  // which) are determined by the GENDER, so identical across same-gender entries.
+  colored_thing: [
+    // === car (en) ===
+    { en_def:"the green car",  sv_def:"den gröna bilen",
+      en_that:"that green car", sv_that:"den där gröna bilen",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"car" },
+    { en_def:"the red car", sv_def:"den röda bilen",
+      en_that:"that red car", sv_that:"den där röda bilen",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"car" },
+    { en_def:"the white car", sv_def:"den vita bilen",
+      en_that:"that white car", sv_that:"den där vita bilen",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"car" },
+
+    // === bag (en) ===
+    { en_def:"the blue bag", sv_def:"den blå väskan",
+      en_that:"that blue bag", sv_that:"den där blå väskan",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"bag" },
+    { en_def:"the red bag", sv_def:"den röda väskan",
+      en_that:"that red bag", sv_that:"den där röda väskan",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"bag" },
+    { en_def:"the black bag", sv_def:"den svarta väskan",
+      en_that:"that black bag", sv_that:"den där svarta väskan",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"bag" },
+
+    // === phone (en) ===
+    { en_def:"the black phone", sv_def:"den svarta telefonen",
+      en_that:"that black phone", sv_that:"den där svarta telefonen",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"phone" },
+    { en_def:"the white phone", sv_def:"den vita telefonen",
+      en_that:"that white phone", sv_that:"den där vita telefonen",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"phone" },
+
+    // === book (en) ===
+    { en_def:"the green book", sv_def:"den gröna boken",
+      en_that:"that green book", sv_that:"den där gröna boken",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"book" },
+    { en_def:"the red book", sv_def:"den röda boken",
+      en_that:"that red book", sv_that:"den där röda boken",
+      en_mine:"mine", sv_mine:"min",
+      en_pron:"it", sv_pron:"den", En_pron:"It", Sv_pron:"Den",
+      en_is_new:"is it new?", sv_is_new:"är den ny?",
+      en_quite_new:"quite new", sv_quite_new:"ganska ny",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt den",
+      sv_which:"vilken", gender:"en", category:"book" },
+
+    // === house (ett) ===
+    { en_def:"the white house", sv_def:"det vita huset",
+      en_that:"that white house", sv_that:"det där vita huset",
+      en_mine:"mine", sv_mine:"mitt",
+      en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det",
+      en_is_new:"is it new?", sv_is_new:"är det nytt?",
+      en_quite_new:"quite new", sv_quite_new:"ganska nytt",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt det",
+      sv_which:"vilket", gender:"ett", category:"house" },
+    { en_def:"the big house", sv_def:"det stora huset",
+      en_that:"that big house", sv_that:"det där stora huset",
+      en_mine:"mine", sv_mine:"mitt",
+      en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det",
+      en_is_new:"is it new?", sv_is_new:"är det nytt?",
+      en_quite_new:"quite new", sv_quite_new:"ganska nytt",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt det",
+      sv_which:"vilket", gender:"ett", category:"house" },
+
+    // === office (ett) ===
+    { en_def:"the small office", sv_def:"det lilla kontoret",
+      en_that:"that small office", sv_that:"det där lilla kontoret",
+      en_mine:"mine", sv_mine:"mitt",
+      en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det",
+      en_is_new:"is it new?", sv_is_new:"är det nytt?",
+      en_quite_new:"quite new", sv_quite_new:"ganska nytt",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt det",
+      sv_which:"vilket", gender:"ett", category:"office" },
+    { en_def:"the big office", sv_def:"det stora kontoret",
+      en_that:"that big office", sv_that:"det där stora kontoret",
+      en_mine:"mine", sv_mine:"mitt",
+      en_pron:"it", sv_pron:"det", En_pron:"It", Sv_pron:"Det",
+      en_is_new:"is it new?", sv_is_new:"är det nytt?",
+      en_quite_new:"quite new", sv_quite_new:"ganska nytt",
+      en_we_bought:"we bought it", sv_we_bought:"vi har köpt det",
+      sv_which:"vilket", gender:"ett", category:"office" },
+  ],
+
+  // ---- VERB (for "do you X?" templates where X is a generic action) ----
+  verb: [
+    { en_do_you:"do you cook often?", sv_do_you:"lagar du mat ofta?",
+      en_yes_i:"yes, I do",          sv_yes_i:"ja, det gör jag",
+      en_no_i:"no, I don't",         sv_no_i:"nej, det gör jag inte" },
+    { en_do_you:"do you read a lot?", sv_do_you:"läser du mycket?",
+      en_yes_i:"yes, I do",          sv_yes_i:"ja, det gör jag",
+      en_no_i:"no, I don't",         sv_no_i:"nej, det gör jag inte" },
+    { en_do_you:"do you exercise?",   sv_do_you:"tränar du?",
+      en_yes_i:"yes, I do",          sv_yes_i:"ja, det gör jag",
+      en_no_i:"no, I don't",         sv_no_i:"nej, det gör jag inte" },
+    { en_do_you:"do you drive?",      sv_do_you:"kör du bil?",
+      en_yes_i:"yes, I do",          sv_yes_i:"ja, det gör jag",
+      en_no_i:"no, I don't",         sv_no_i:"nej, det gör jag inte" },
+    { en_do_you:"are you working today?", sv_do_you:"jobbar du idag?",
+      en_yes_i:"yes, I am",              sv_yes_i:"ja, det gör jag",
+      en_no_i:"no, I'm not",             sv_no_i:"nej, det gör jag inte" },
+    { en_do_you:"have you eaten?",       sv_do_you:"har du ätit?",
+      en_yes_i:"yes, I have",           sv_yes_i:"ja, det har jag",
+      en_no_i:"no, I haven't",          sv_no_i:"nej, det har jag inte" },
+    { en_do_you:"do you have a car?",    sv_do_you:"har du en bil?",
+      en_yes_i:"yes, I do",             sv_yes_i:"ja, det har jag",
+      en_no_i:"no, I don't",            sv_no_i:"nej, det har jag inte" },
+    { en_do_you:"are you tired?",        sv_do_you:"är du trött?",
+      en_yes_i:"yes, I am",             sv_yes_i:"ja, det är jag",
+      en_no_i:"no, I'm not",            sv_no_i:"nej, det är jag inte" },
+  ],
+};
+
+
+// =====================================================================
+// TEMPLATES
+// Each template:
+//   id        — unique string
+//   tags      — categories drilled (informational only)
+//   speakers  — array, one entry per line: "A" or "B"
+//   slots     — { slotName: poolName } — randomly picked per generation
+//   en, sv    — arrays of lines (same length as speakers); use {slot.field}
+// =====================================================================
+
+const TEMPLATES = [
+
+  {
+    id: "where-is-thing-next-to",
+    tags: ["prepositions", "definite"],
+    speakers: ["A","B","A"],
+    slots: { thing:"food", other:"food" },
+    en: [
+      "Where is {thing.en_def}?",
+      "Next to {other.en_def}.",
+      "Ah, thanks."
+    ],
+    sv: [
+      "Var är {thing.sv_def}?",
+      "Bredvid {other.sv_def}.",
+      "Aha, tack."
+    ],
+  },
+
+  {
+    id: "where-is-thing-on",
+    tags: ["prepositions", "definite"],
+    speakers: ["A","B","A"],
+    slots: { thing:"object", spot:"furniture" },
+    en: [
+      "Have you seen {thing.en_def}?",
+      "Yes, {thing.en_pron}'s {spot.en_on}.",
+      "Great, thanks!"
+    ],
+    sv: [
+      "Har du sett {thing.sv_def}?",
+      "Ja, {thing.sv_pron} är {spot.sv_on}.",
+      "Vad bra, tack!"
+    ],
+  },
+
+  {
+    id: "is-thing-in-place",
+    tags: ["prepositions", "pronouns", "negation"],
+    speakers: ["A","B","A"],
+    slots: { thing:"food", wrong:"furniture", right:"furniture" },
+    en: [
+      "Is {thing.en_def} {wrong.en_on}?",
+      "No, {thing.en_pron}'s still {right.en_on}.",
+      "Ah, I'll grab {thing.en_pron} from there then."
+    ],
+    sv: [
+      "Är {thing.sv_def} {wrong.sv_on}?",
+      "Nej, {thing.sv_pron} är fortfarande {right.sv_on}.",
+      "Aha, då tar jag {thing.sv_pron} därifrån."
+    ],
+  },
+
+  {
+    id: "do-you-like-food-yes",
+    tags: ["likes", "responses"],
+    speakers: ["A","B","A","B"],
+    slots: { food:"food" },
+    en: [
+      "Do you like {food.en_likes}?",
+      "Yes, I love {food.en_likes}!",
+      "Me too!",
+      "Nice."
+    ],
+    sv: [
+      "Tycker du om {food.sv_likes}?",
+      "Ja, jag älskar {food.sv_likes}!",
+      "Jag också!",
+      "Vad kul."
+    ],
+  },
+
+  {
+    id: "do-you-like-food-no",
+    tags: ["likes", "negation", "responses"],
+    speakers: ["A","B","A","B"],
+    slots: { food:"food", other:"food" },
+    en: [
+      "Do you like {food.en_likes}?",
+      "No, I don't. I prefer {other.en_likes} instead.",
+      "Oh, do you want some {other.en_likes} then?",
+      "Yes please!"
+    ],
+    sv: [
+      "Tycker du om {food.sv_likes}?",
+      "Nej, det gör jag inte. Jag föredrar {other.sv_likes} istället.",
+      "Aha, vill du ha {other.sv_likes} då?",
+      "Ja tack!"
+    ],
+  },
+
+  {
+    id: "do-you-like-activity",
+    tags: ["likes", "activities"],
+    speakers: ["A","B","A"],
+    slots: { act:"activity" },
+    en: [
+      "Do you like {act.en_ing}?",
+      "Yes, I really do.",
+      "Same here!"
+    ],
+    sv: [
+      "Tycker du om {act.sv_ing}?",
+      "Ja, det gör jag verkligen.",
+      "Samma här!"
+    ],
+  },
+
+  {
+    id: "prepared-doc-yes",
+    tags: ["work", "perfect-tense"],
+    speakers: ["A","B","A"],
+    slots: { doc:"object", t:"past_time" },
+    en: [
+      "Have you prepared {doc.en_def}?",
+      "Yes, I sent {doc.en_pron} {t.en}.",
+      "Great, thanks!"
+    ],
+    sv: [
+      "Har du förberett {doc.sv_def}?",
+      "Ja, jag skickade {doc.sv_pron} {t.sv}.",
+      "Vad bra, tack!"
+    ],
+  },
+
+  {
+    id: "prepared-doc-not-yet",
+    tags: ["work", "negation"],
+    speakers: ["A","B","A","B"],
+    slots: { doc:"object" },
+    en: [
+      "Have you prepared {doc.en_def}?",
+      "Not yet — I'll do it tomorrow.",
+      "Ok, no rush.",
+      "Thanks."
+    ],
+    sv: [
+      "Har du förberett {doc.sv_def}?",
+      "Inte än — jag gör det imorgon.",
+      "Okej, ingen brådska.",
+      "Tack."
+    ],
+  },
+
+  {
+    id: "what-time-meeting",
+    tags: ["time", "clock"],
+    speakers: ["A","B","A"],
+    slots: { c:"clock" },
+    en: [
+      "What time is the meeting?",
+      "{c.en|cap}.",
+      "Ok, see you then."
+    ],
+    sv: [
+      "Vilken tid är mötet?",
+      "{c.sv|cap}.",
+      "Okej, vi ses då."
+    ],
+  },
+
+  {
+    id: "when-does-start",
+    tags: ["time", "clock"],
+    speakers: ["A","B","A"],
+    slots: { c:"clock" },
+    en: [
+      "When does the meeting start?",
+      "It starts {c.en}.",
+      "Then we have time."
+    ],
+    sv: [
+      "När börjar mötet?",
+      "Det börjar {c.sv}.",
+      "Då har vi tid."
+    ],
+  },
+
+  {
+    id: "pick-up-yes",
+    tags: ["hämta/lämna", "perfect-tense"],
+    speakers: ["A","B","A","B"],
+    slots: { obj:"object", p:"place", t:"past_time" },
+    en: [
+      "Did you pick up {obj.en_def} from {p.en_def}?",
+      "Yes, I picked {obj.en_pron} up {t.en}.",
+      "Great, thanks!",
+      "No problem."
+    ],
+    sv: [
+      "Hämtade du {obj.sv_def} från {p.sv_def}?",
+      "Ja, jag hämtade {obj.sv_pron} {t.sv}.",
+      "Vad bra, tack!",
+      "Inga problem."
+    ],
+  },
+
+  {
+    id: "pick-up-no",
+    tags: ["hämta/lämna", "negation"],
+    speakers: ["A","B","A"],
+    slots: { obj:"object", p:"place" },
+    en: [
+      "Did you pick up {obj.en_def} from {p.en_def}?",
+      "No, I'll do it tomorrow.",
+      "Ok, no rush."
+    ],
+    sv: [
+      "Hämtade du {obj.sv_def} från {p.sv_def}?",
+      "Nej, jag gör det imorgon.",
+      "Okej, ingen brådska."
+    ],
+  },
+
+  {
+    id: "drop-off",
+    tags: ["hämta/lämna"],
+    speakers: ["A","B","A"],
+    slots: { obj:"object", p:"place" },
+    en: [
+      "Can you drop off {obj.en_def} {p.at_en}?",
+      "Sure, on my way.",
+      "Thanks!"
+    ],
+    sv: [
+      "Kan du lämna {obj.sv_def} {p.at_sv}?",
+      "Visst, på vägen.",
+      "Tack!"
+    ],
+  },
+
+  {
+    id: "been-at-place-recently-yes",
+    tags: ["perfect-tense", "places"],
+    speakers: ["A","B","A","B"],
+    slots: { p:"place", t:"past_time" },
+    en: [
+      "Have you been {p.at_en} lately?",
+      "Yes, I was there {t.en}.",
+      "Ah, how was it?",
+      "It was good."
+    ],
+    sv: [
+      "Har du varit {p.at_sv} nyligen?",
+      "Ja, jag var där {t.sv}.",
+      "Aha, hur var det?",
+      "Det var bra."
+    ],
+  },
+
+  {
+    id: "been-at-place-recently-no",
+    tags: ["perfect-tense", "places", "negation"],
+    speakers: ["A","B","A"],
+    slots: { p:"place" },
+    en: [
+      "Have you been {p.at_en} lately?",
+      "No, not for a long time.",
+      "Me neither."
+    ],
+    sv: [
+      "Har du varit {p.at_sv} nyligen?",
+      "Nej, inte på länge.",
+      "Inte jag heller."
+    ],
+  },
+
+  {
+    id: "are-you-at-place",
+    tags: ["places"],
+    speakers: ["A","B","A"],
+    slots: { p:"place" },
+    en: [
+      "Are you {p.at_en}?",
+      "Yes, I'm here now.",
+      "Ok, I'm coming."
+    ],
+    sv: [
+      "Är du {p.at_sv}?",
+      "Ja, jag är här nu.",
+      "Okej, jag kommer."
+    ],
+  },
+
+  {
+    id: "is-she-there",
+    tags: ["places", "people"],
+    speakers: ["A","B","A","B"],
+    slots: { p:"place", t:"past_time" },
+    en: [
+      "Is she {p.at_en} now?",
+      "Yes, she went there {t.en}.",
+      "Did anyone go with her?",
+      "No, she went alone."
+    ],
+    sv: [
+      "Är hon {p.at_sv} nu?",
+      "Ja, hon åkte dit {t.sv}.",
+      "Åkte någon med henne?",
+      "Nej, hon åkte ensam."
+    ],
+  },
+
+  {
+    id: "are-you-cooking-yes",
+    tags: ["home", "small-talk"],
+    speakers: ["A","B","A","B"],
+    slots: { food:"food" },
+    en: [
+      "Are you cooking?",
+      "Yes, I'm making {food.en_likes}.",
+      "Smells good.",
+      "Thanks!"
+    ],
+    sv: [
+      "Lagar du mat?",
+      "Ja, jag gör {food.sv_likes}.",
+      "Det luktar gott.",
+      "Tack!"
+    ],
+  },
+
+  {
+    id: "are-you-cooking-no",
+    tags: ["home", "small-talk", "negation"],
+    speakers: ["A","B","A","B"],
+    slots: {},
+    en: [
+      "Are you cooking?",
+      "No, I'm too tired.",
+      "Want me to make something?",
+      "Yes please!"
+    ],
+    sv: [
+      "Lagar du mat?",
+      "Nej, jag är för trött.",
+      "Vill du att jag gör något?",
+      "Ja tack!"
+    ],
+  },
+
+  {
+    id: "did-you-eat",
+    tags: ["perfect-tense", "food"],
+    speakers: ["A","B","A"],
+    slots: { food:"food" },
+    en: [
+      "Did you eat {food.en_def}?",
+      "Yes, it was really good.",
+      "Glad you liked it."
+    ],
+    sv: [
+      "Åt du {food.sv_def}?",
+      "Ja, det var jättegott.",
+      "Vad bra att du gillade det."
+    ],
+  },
+
+  {
+    id: "applied-citizenship",
+    tags: ["bureaucracy", "perfect-tense"],
+    speakers: ["A","B","A","B"],
+    slots: {},
+    en: [
+      "Have you applied for citizenship?",
+      "Yes, but I'm still waiting.",
+      "Same here.",
+      "We'll see."
+    ],
+    sv: [
+      "Har du ansökt om medborgarskap?",
+      "Ja, men jag väntar fortfarande.",
+      "Samma här.",
+      "Vi får se."
+    ],
+  },
+
+  {
+    id: "how-long-studying",
+    tags: ["time", "i-X-år"],
+    speakers: ["A","B","A"],
+    slots: { y:"years_count" },
+    en: [
+      "How long have you been studying Swedish?",
+      "For {y.en} years now.",
+      "That's a long time!"
+    ],
+    sv: [
+      "Hur länge har du läst svenska?",
+      "I {y.sv} år nu.",
+      "Det är en lång tid!"
+    ],
+  },
+
+  {
+    id: "how-long-lived",
+    tags: ["time", "sedan-X"],
+    speakers: ["A","B","A"],
+    slots: { y:"year" },
+    en: [
+      "How long have you lived in Sweden?",
+      "Since {y.en}.",
+      "Wow, that's a while."
+    ],
+    sv: [
+      "Hur länge har du bott i Sverige?",
+      "Sedan {y.sv}.",
+      "Wow, det är ett tag."
+    ],
+  },
+
+  {
+    id: "where-from",
+    tags: ["intro", "varifrån"],
+    speakers: ["A","B","A","B"],
+    slots: { c:"country", y:"year" },
+    en: [
+      "Where are you from?",
+      "I'm from {c.en}.",
+      "Oh nice. How long have you been in Sweden?",
+      "Since {y.en}."
+    ],
+    sv: [
+      "Var kommer du ifrån?",
+      "Jag kommer från {c.sv}.",
+      "Vad kul. Hur länge har du varit i Sverige?",
+      "Sedan {y.sv}."
+    ],
+  },
+
+  {
+    id: "can-i-get-yes",
+    tags: ["café", "shopping"],
+    speakers: ["A","B","A","B"],
+    slots: { f:"food" },
+    en: [
+      "Can I get {f.en_indef}, please?",
+      "Sure. For here or to go?",
+      "To go, thanks.",
+      "Here you are."
+    ],
+    sv: [
+      "Kan jag få {f.sv_indef}, tack?",
+      "Visst. Att äta här eller ta med?",
+      "Att ta med, tack.",
+      "Varsågod."
+    ],
+  },
+
+  {
+    id: "can-i-get-no",
+    tags: ["café", "shopping", "negation"],
+    speakers: ["A","B","A","B"],
+    slots: { f:"food", g:"food" },
+    en: [
+      "Can I get {f.en_indef}, please?",
+      "Sorry, we're out of {f.en_likes}.",
+      "Ok, then {g.en_indef} instead.",
+      "Coming right up."
+    ],
+    sv: [
+      "Kan jag få {f.sv_indef}, tack?",
+      "Tyvärr, vi har slut på {f.sv_likes}.",
+      "Okej, då tar jag {g.sv_indef} istället.",
+      "Det kommer strax."
+    ],
+  },
+
+  {
+    id: "whose-mine",
+    tags: ["possessive"],
+    speakers: ["A","B","A"],
+    slots: { o:"object" },
+    en: [
+      "Whose {o.en_def} is this?",
+      "{o.En_pron}'s {o.en_mine}.",
+      "Oh, sorry!"
+    ],
+    sv: [
+      "Vems {o.sv_def} är det här?",
+      "{o.Sv_pron} är {o.sv_mine}.",
+      "Åh, förlåt!"
+    ],
+  },
+
+  {
+    id: "whose-someone-elses",
+    tags: ["possessive"],
+    speakers: ["A","B","A"],
+    slots: { o:"object" },
+    en: [
+      "Whose {o.en_def} is this?",
+      "Not mine. Maybe someone else's?",
+      "Ok, I'll ask around."
+    ],
+    sv: [
+      "Vems {o.sv_def} är det här?",
+      "Inte min. Kanske någon annans?",
+      "Okej, jag ska fråga runt."
+    ],
+  },
+
+  {
+    id: "do-you-have-yes",
+    tags: ["responses"],
+    speakers: ["A","B","A"],
+    slots: { o:"object" },
+    en: [
+      "Do you have {o.en_indef}?",
+      "Yes, I do.",
+      "Can I borrow {o.en_pron}?"
+    ],
+    sv: [
+      "Har du {o.sv_indef}?",
+      "Ja, det har jag.",
+      "Får jag låna {o.sv_pron}?"
+    ],
+  },
+
+  {
+    id: "do-you-have-no",
+    tags: ["responses", "negation"],
+    speakers: ["A","B","A"],
+    slots: { o:"object" },
+    en: [
+      "Do you have {o.en_indef}?",
+      "No, I don't.",
+      "Ok, never mind."
+    ],
+    sv: [
+      "Har du {o.sv_indef}?",
+      "Nej, det har jag inte.",
+      "Okej, glöm det."
+    ],
+  },
+
+  {
+    id: "is-place-open",
+    tags: ["small-talk"],
+    speakers: ["A","B","A"],
+    slots: { p:"place", c:"clock" },
+    where: { p: { is_business: true } },
+    en: [
+      "Is {p.en_def} open today?",
+      "Yes, it closes {c.en}.",
+      "Great, then we have time."
+    ],
+    sv: [
+      "Har {p.sv_def} öppet idag?",
+      "Ja, {p.sv_pron} stänger {c.sv}.",
+      "Vad bra, då har vi tid."
+    ],
+  },
+
+  {
+    id: "what-floor",
+    tags: ["home"],
+    speakers: ["A","B","A"],
+    slots: { f:"floor" },
+    en: [
+      "What floor do you live on?",
+      "I live on the {f.en}.",
+      "Ah, nice."
+    ],
+    sv: [
+      "Vilken våning bor du på?",
+      "Jag bor på {f.sv}.",
+      "Aha, fint."
+    ],
+  },
+
+  {
+    id: "take-with-you",
+    tags: ["small-talk"],
+    speakers: ["A","B","A","B"],
+    slots: { o:"object" },
+    en: [
+      "Can you take {o.en_def} with you?",
+      "Sure, no problem.",
+      "Thanks!",
+      "You're welcome."
+    ],
+    sv: [
+      "Kan du ta med {o.sv_def}?",
+      "Visst, inga problem.",
+      "Tack!",
+      "Ingen orsak."
+    ],
+  },
+
+  {
+    id: "want-to-try",
+    tags: ["food"],
+    speakers: ["A","B","A"],
+    slots: { f:"food" },
+    en: [
+      "Want to try {f.en_def}?",
+      "Sure, it looks good.",
+      "Here you are."
+    ],
+    sv: [
+      "Vill du smaka {f.sv_def}?",
+      "Visst, det ser gott ut.",
+      "Varsågod."
+    ],
+  },
+
+  {
+    id: "demonstrative-grammar",
+    tags: ["demonstrative", "adjective-def", "anaphora", "possessive"],
+    speakers: ["A","B","A","B","A"],
+    slots: { c:"colored_thing", c2:"colored_thing", t:"past_time" },
+    sameCategory: ["c", "c2"],
+    en: [
+      "{c.en_that|cap} is {c.en_mine}.",
+      "Which one? {c2.en_that|cap}?",
+      "No, {c.en_that}.",
+      "Aha. {c.en_is_new|cap}",
+      "Yes, {c.en_quite_new}. {c.en_we_bought|cap} {t.en}."
+    ],
+    sv: [
+      "{c.sv_that|cap} är {c.sv_mine}.",
+      "{c.sv_which|cap}? {c2.sv_that|cap}?",
+      "Nej, {c.sv_that}.",
+      "Aha. {c.sv_is_new|cap}",
+      "Ja, {c.sv_quite_new}. {c.sv_we_bought|cap} {t.sv}."
+    ],
+  },
+
+  {
+    id: "do-you-X-yes",
+    tags: ["responses", "echo-verb"],
+    speakers: ["A","B","A"],
+    slots: { v:"verb" },
+    en: [
+      "{v.en_do_you|cap}",
+      "{v.en_yes_i|cap}.",
+      "Same here."
+    ],
+    sv: [
+      "{v.sv_do_you|cap}",
+      "{v.sv_yes_i|cap}.",
+      "Samma här."
+    ],
+  },
+
+  {
+    id: "do-you-X-no",
+    tags: ["responses", "echo-verb", "negation"],
+    speakers: ["A","B","A"],
+    slots: { v:"verb" },
+    en: [
+      "{v.en_do_you|cap}",
+      "{v.en_no_i|cap}.",
+      "Ah ok."
+    ],
+    sv: [
+      "{v.sv_do_you|cap}",
+      "{v.sv_no_i|cap}.",
+      "Aha okej."
+    ],
+  },
+
+  {
+    id: "going-to-place",
+    tags: ["places", "till"],
+    speakers: ["A","B","A","B"],
+    slots: { p:"place", c:"clock" },
+    en: [
+      "Are you going {p.to_en}?",
+      "Yes, {c.en}.",
+      "Can I come with?",
+      "Of course!"
+    ],
+    sv: [
+      "Ska du {p.to_sv}?",
+      "Ja, {c.sv}.",
+      "Får jag följa med?",
+      "Visst!"
+    ],
+  },
+
+  {
+    id: "lost-thing",
+    tags: ["objects", "negation"],
+    speakers: ["A","B","A","B"],
+    slots: { o:"object", spot:"furniture" },
+    en: [
+      "I can't find {o.en_my}.",
+      "Have you looked {spot.en_on}?",
+      "Yes, {o.en_pron}'s not there.",
+      "Strange."
+    ],
+    sv: [
+      "Jag hittar inte {o.sv_my}.",
+      "Har du tittat {spot.sv_on}?",
+      "Ja, {o.sv_pron} är inte där.",
+      "Konstigt."
+    ],
+  },
+
+];
+
+
+// =====================================================================
+// ENGINE
+// =====================================================================
+
+// Simple seedable PRNG (mulberry32)
+function makeRng(seed) {
+  let s = seed >>> 0;
+  return function () {
+    s = (s + 0x6D2B79F5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function cap(s) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
+function render(line, filled) {
+  return line.replace(/\{(\w+)\.(\w+)(?:\|(\w+))?\}/g, (_, slot, prop, mod) => {
+    const entry = filled[slot];
+    if (!entry) throw new Error(`Unfilled slot: ${slot}`);
+    let v = entry[prop];
+    if (v == null) throw new Error(`Missing property '${prop}' on slot '${slot}' (entry: ${JSON.stringify(entry).slice(0,80)}...)`);
+    if (mod === "cap") v = cap(v);
+    return v;
+  });
+}
+
+// Pick distinct entries when two slots share the same pool.
+// Template extras:
+//   - `sameCategory: ["c","c2"]`   — these slots all share the same `category`
+//   - `where: { p: { is_business: true } }` — restrict slot `p` to pool entries
+//     where every key matches the given value (e.g. is_business===true)
+function pickSlots(template, rng) {
+  const slots = template.slots || {};
+  const sameCategory = template.sameCategory || [];
+  const where = template.where || {};
+  const filled = {};
+  const usedByPool = {};
+
+  for (const [slotName, poolName] of Object.entries(slots)) {
+    const pool = POOLS[poolName];
+    if (!pool) throw new Error(`Unknown pool: ${poolName}`);
+    if (!usedByPool[poolName]) usedByPool[poolName] = new Set();
+
+    // Start with every index, then narrow down.
+    let allowed = pool.map((_, i) => i);
+
+    // Apply `where` filter for this slot.
+    if (where[slotName]) {
+      const conds = Object.entries(where[slotName]);
+      allowed = allowed.filter(i => conds.every(([k, v]) => pool[i][k] === v));
+    }
+
+    // Apply sameCategory constraint.
+    if (sameCategory.includes(slotName)) {
+      for (const peer of sameCategory) {
+        if (peer !== slotName && filled[peer] && filled[peer].category) {
+          const target = filled[peer].category;
+          allowed = allowed.filter(i => pool[i].category === target);
+          break;
+        }
+      }
+    }
+
+    if (allowed.length === 0) {
+      throw new Error(`No pool entries match slot ${slotName} in template ${template.id}`);
+    }
+
+    let idx, tries = 0;
+    do {
+      idx = allowed[Math.floor(rng() * allowed.length)];
+      tries++;
+      if (tries > 50) break;
+    } while (usedByPool[poolName].has(idx) && usedByPool[poolName].size < allowed.length);
+
+    usedByPool[poolName].add(idx);
+    filled[slotName] = pool[idx];
+  }
+  return filled;
+}
+
+function buildDialog(templateIdx, seed) {
+  const template = TEMPLATES[templateIdx];
+  const rng = makeRng(seed);
+  const filled = pickSlots(template, rng);
+  return {
+    templateIdx,
+    seed,
+    templateId: template.id,
+    tags: template.tags || [],
+    speakers: template.speakers,
+    en: template.en.map(line => render(line, filled)),
+    sv: template.sv.map(line => render(line, filled)),
+  };
+}
+
+// =====================================================================
+// SHARED-SESSION CONFIG
+// =====================================================================
+// To enable shared teacher↔student sessions:
+//   1. Create a Firebase project: https://console.firebase.google.com
+//   2. Build → Realtime Database → Create Database → start in TEST mode
+//   3. Project settings → "Your apps" → add a Web app → copy the firebaseConfig
+//   4. Paste the values below, replacing the PASTE_* placeholders.
+//   5. (Recommended) Tighten the database security rules — see README.md.
+// Without these steps, the page works exactly as before (single user).
+//
+// IMPORTANT: the apiKey here is NOT secret — Firebase web apps publish it.
+// Real security comes from the Realtime Database rules.
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyD1wbNLlhtp042p3cNzY7n_kxWPog6vcEA",
+  authDomain: "svenska-drill.firebaseapp.com",
+  databaseURL: "https://svenska-drill-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "svenska-drill",
+  storageBucket: "svenska-drill.firebasestorage.app",
+  messagingSenderId: "438311919856",
+  appId: "1:438311919856:web:8f54cfc457236adae26235",
+  measurementId: "G-MZND2M8L8L"
+};
+
+
+// =====================================================================
+// URL → role + session
+// =====================================================================
+const _url = new URL(window.location.href);
+const SESSION_ID = _url.searchParams.get("session");
+const URL_ROLE   = _url.searchParams.get("role");
+
+const FIREBASE_CONFIGURED = !FIREBASE_CONFIG.apiKey.startsWith("PASTE");
+
+let role = "single";  // "single" | "teacher" | "student"
+let _setupWarning = null;
+if (SESSION_ID && FIREBASE_CONFIGURED) {
+  role = URL_ROLE === "student" ? "student" : "teacher";
+} else if (SESSION_ID && !FIREBASE_CONFIGURED) {
+  console.error("[E09] Session requested but backend not configured. Edit dialog.html — see README.md.");
+  _setupWarning = `Something went wrong: Code-E09`;
+}
+
+
+// =====================================================================
+// STATE — single source of truth
+// =====================================================================
+let state = {
+  templateIdx:   null,
+  seed:          null,
+  revealed_en:   [],         // per-line: is English visible to student?
+  revealed_sv:   [],         // per-line: is Swedish visible to student?
+  showAll:       false,      // override: show everything to student
+  strictMode:    false,      // also hide student's own lines
+  studentSpeaks: "B",        // which speaker letter is the student
+};
+
+// Teacher / single-user navigation history (not synced over Firebase —
+// each Prev/Next from teacher writes a new "current" to the session)
+const history = [];
+let cursor = -1;
+
+let sessionRef = null;
+
+
+// =====================================================================
+// FIREBASE
+// =====================================================================
+function initFirebase() {
+  if (role === "single") return;
+  if (typeof firebase === "undefined") {
+    console.error("[E01] Backend SDK didn't load");
+    role = "single";
+    showSetupNotice("Something went wrong: Code-E01");
+    return;
+  }
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    sessionRef = firebase.database().ref("sessions/" + SESSION_ID);
+    setConnStatus("connecting");
+    firebase.database().ref(".info/connected").on("value", snap => {
+      setConnStatus(snap.val() ? "connected" : "offline");
+    });
+    sessionRef.on("value", snap => {
+      const data = snap.val();
+      if (data && data.templateIdx != null) {
+        // strip passcode field — it's only used for rule validation
+        const { passcode, ...rest } = data;
+        state = Object.assign({
+          revealed_en: [], revealed_sv: [],
+          showAll: false, strictMode: false, studentSpeaks: "B"
+        }, rest);
+        // Migrate old single-flag `revealed[]` to the two-side fields.
+        if (Array.isArray(state.revealed) && (!Array.isArray(state.revealed_en) || state.revealed_en.length === 0)) {
+          state.revealed_en = state.revealed.slice();
+          state.revealed_sv = state.revealed.slice();
+        }
+        delete state.revealed;
+        applyAndRender();
+      } else if (role === "teacher") {
+        // empty session — teacher seeds it with the first dialog
+        nextDialog();
+      }
+    });
+  } catch (e) {
+    console.error("[E02] Init failed:", e);
+    role = "single";
+    showSetupNotice("Something went wrong: Code-E02");
+  }
+}
+
+function writeShared() {
+  if (sessionRef && role === "teacher") {
+    const passcode = localStorage.getItem("svenska_passcode") || "";
+    sessionRef.set({ ...state, passcode }).catch(e => {
+      if (String(e).includes("PERMISSION_DENIED")) {
+        // Wrong passcode — prompt for it again
+        console.error("[E03] Write rejected (passcode mismatch):", e);
+        localStorage.removeItem("svenska_passcode");
+        const pc = prompt("Wrong passcode — re-enter:");
+        if (pc) {
+          localStorage.setItem("svenska_passcode", pc);
+          writeShared();
+        }
+      } else {
+        console.error("[E04] Write failed:", e);
+        alert("Something went wrong: Code-E04");
+      }
+    });
+  }
+}
+
+
+// =====================================================================
+// VISIBILITY LOGIC
+// =====================================================================
+function visibilityFor(i, sp) {
+  if (role === "single") {
+    // single-user: EN always, SV on tap
+    return { en: true, sv: !!state.revealed_sv[i] };
+  }
+  if (role === "teacher") {
+    // teacher sees everything (the indicator dots show what student sees)
+    return { en: true, sv: true };
+  }
+  // student
+  if (state.showAll) return { en: true, sv: true };
+  const en = !!state.revealed_en[i]
+          || (!state.strictMode && sp === state.studentSpeaks);
+  const sv = !!state.revealed_sv[i];
+  return { en, sv };
+}
+
+
+// =====================================================================
+// RENDER
+// =====================================================================
+function applyAndRender() {
+  if (state.templateIdx == null) {
+    const dialogEl = document.getElementById("dialog");
+    if (role === "student") {
+      dialogEl.innerHTML = '<div style="text-align:center;color:var(--ink-dim);padding:40px;font-size:14px;">Waiting for teacher to start a dialog…</div>';
+    } else {
+      dialogEl.innerHTML = "";
+    }
+    document.getElementById("meta").innerHTML = "";
+    document.getElementById("seed").textContent = "";
+    return;
+  }
+  const tpl = TEMPLATES[state.templateIdx];
+  const n = tpl.speakers.length;
+
+  // make sure the reveal arrays have the right length
+  if (!Array.isArray(state.revealed_en) || state.revealed_en.length !== n) {
+    state.revealed_en = new Array(n).fill(false);
+  }
+  if (!Array.isArray(state.revealed_sv) || state.revealed_sv.length !== n) {
+    state.revealed_sv = new Array(n).fill(false);
+  }
+
+  const d = buildDialog(state.templateIdx, state.seed);
+  renderDialog(d);
+  syncTeacherControls();
+  syncToolbar();
+}
+
+function renderDialog(d) {
+  const dialogEl = document.getElementById("dialog");
+  const metaEl = document.getElementById("meta");
+  const seedEl = document.getElementById("seed");
+  dialogEl.innerHTML = "";
+  dialogEl.classList.remove("role-single", "role-teacher", "role-student");
+  dialogEl.classList.add("role-" + role);
+
+  d.speakers.forEach((sp, i) => {
+    const vis = visibilityFor(i, sp);
+
+    const row = document.createElement("div");
+    row.className = "row";
+    row.dataset.speaker = sp;
+
+    // EN bubble
+    const enBubble = document.createElement("div");
+    enBubble.className = "bubble en " + sp.toLowerCase();
+    if (!vis.en) enBubble.classList.add("placeholder");
+    // Muted styling (grey fill, coloured border) when the line isn't
+    // currently revealed to the student. Teacher always has the text
+    // visible — only the fill changes.
+    if (role === "teacher" && !state.revealed_en[i]) enBubble.classList.add("muted");
+    else if (role === "student" && !vis.en) enBubble.classList.add("muted");
+
+    const who = document.createElement("span");
+    who.className = "who";
+    who.textContent = sp;
+    const text = document.createElement("span");
+    text.className = "text";
+    text.textContent = d.en[i];
+    enBubble.appendChild(who);
+    enBubble.appendChild(text);
+
+    // SV bubble
+    const svBubble = document.createElement("div");
+    svBubble.className = "bubble sv";
+    if (vis.sv) svBubble.classList.add("revealed");
+    if (role === "teacher" && state.revealed_sv[i]) svBubble.classList.add("revealed-by-student-view");
+    svBubble.textContent = d.sv[i];
+
+    // Per-bubble tap handlers
+    if (role === "teacher") {
+      enBubble.onclick = (e) => { e.stopPropagation(); toggleRevealEn(i); };
+      svBubble.onclick = (e) => { e.stopPropagation(); toggleRevealSv(i); };
+    } else if (role === "single") {
+      // single user: clicking anywhere reveals/hides the Swedish (legacy)
+      const tap = (e) => { e.stopPropagation(); toggleRevealSv(i); };
+      enBubble.onclick = tap;
+      svBubble.onclick = tap;
+    }
+
+    row.appendChild(enBubble);
+    row.appendChild(svBubble);
+    dialogEl.appendChild(row);
+  });
+
+  metaEl.innerHTML = "";
+  const tplTag = document.createElement("span");
+  tplTag.className = "tag";
+  tplTag.textContent = "template: " + d.templateId;
+  metaEl.appendChild(tplTag);
+  d.tags.forEach(t => {
+    const span = document.createElement("span");
+    span.className = "tag";
+    span.textContent = t;
+    metaEl.appendChild(span);
+  });
+
+  if (role === "single") {
+    seedEl.textContent = `#${cursor + 1} · seed ${d.seed.toString(36)}`;
+  } else {
+    seedEl.textContent = `seed ${d.seed.toString(36)}`;
+  }
+}
+
+
+// =====================================================================
+// COMMANDS
+// =====================================================================
+function nextDialog() {
+  if (role === "student") return;
+  const ti = Math.floor(Math.random() * TEMPLATES.length);
+  const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+  const n = TEMPLATES[ti].speakers.length;
+  state = Object.assign({}, state, {
+    templateIdx: ti,
+    seed,
+    revealed_en: new Array(n).fill(false),
+    revealed_sv: new Array(n).fill(false),
+    showAll: false,
+  });
+  if (cursor < history.length - 1) history.splice(cursor + 1);
+  history.push(JSON.parse(JSON.stringify(state)));
+  cursor = history.length - 1;
+  writeShared();
+  applyAndRender();
+}
+
+function prevDialog() {
+  if (role === "student") return;
+  if (cursor > 0) {
+    cursor--;
+    state = JSON.parse(JSON.stringify(history[cursor]));
+    writeShared();
+    applyAndRender();
+  }
+}
+
+function replay() {
+  applyAndRender();
+}
+
+function toggleRevealEn(i) {
+  if (role === "student") return;
+  state.revealed_en = state.revealed_en.slice();
+  state.revealed_en[i] = !state.revealed_en[i];
+  writeShared();
+  applyAndRender();
+}
+
+function toggleRevealSv(i) {
+  if (role === "student") return;
+  state.revealed_sv = state.revealed_sv.slice();
+  state.revealed_sv[i] = !state.revealed_sv[i];
+  writeShared();
+  applyAndRender();
+}
+
+function revealAll() {
+  if (role === "student") return;
+  state.revealed_en = state.revealed_en.map(() => true);
+  state.revealed_sv = state.revealed_sv.map(() => true);
+  writeShared();
+  applyAndRender();
+}
+
+function hideAll() {
+  if (role === "student") return;
+  state.revealed_en = state.revealed_en.map(() => false);
+  state.revealed_sv = state.revealed_sv.map(() => false);
+  state.showAll = false;
+  writeShared();
+  applyAndRender();
+}
+
+// Advance the linear reveal:  line 0 EN → line 0 SV → line 1 EN → line 1 SV → …
+function revealNextStep() {
+  if (role === "student") return;
+  for (let i = 0; i < state.revealed_en.length; i++) {
+    if (!state.revealed_en[i]) {
+      state.revealed_en = state.revealed_en.slice();
+      state.revealed_en[i] = true;
+      writeShared();
+      applyAndRender();
+      return;
+    }
+    if (!state.revealed_sv[i]) {
+      state.revealed_sv = state.revealed_sv.slice();
+      state.revealed_sv[i] = true;
+      writeShared();
+      applyAndRender();
+      return;
+    }
+  }
+  // Everything already revealed — no-op.
+}
+
+// Step back one reveal:  hide the most-recently-revealed bubble.
+function hideLastStep() {
+  if (role === "student") return;
+  for (let i = state.revealed_sv.length - 1; i >= 0; i--) {
+    if (state.revealed_sv[i]) {
+      state.revealed_sv = state.revealed_sv.slice();
+      state.revealed_sv[i] = false;
+      writeShared();
+      applyAndRender();
+      return;
+    }
+    if (state.revealed_en[i]) {
+      state.revealed_en = state.revealed_en.slice();
+      state.revealed_en[i] = false;
+      writeShared();
+      applyAndRender();
+      return;
+    }
+  }
+}
+
+function setShowAll(on) {
+  if (role === "student") return;
+  state.showAll = !!on;
+  writeShared();
+  applyAndRender();
+}
+
+function setStrict(on) {
+  if (role === "student") return;
+  state.strictMode = !!on;
+  writeShared();
+  applyAndRender();
+}
+
+function setStudentSpeaks(sp) {
+  if (role === "student") return;
+  state.studentSpeaks = sp;
+  writeShared();
+  applyAndRender();
+}
+
+
+// =====================================================================
+// TOOLBAR & UI SYNC
+// =====================================================================
+function syncToolbar() {
+  const isStudent = role === "student";
+  document.getElementById("prev").disabled        = isStudent || cursor <= 0;
+  document.getElementById("next").disabled        = isStudent;
+  document.getElementById("replay").disabled      = false;
+  document.getElementById("reveal-all").disabled  = isStudent;
+  document.getElementById("hide-all").disabled    = isStudent;
+  document.getElementById("reveal-next").disabled = isStudent;
+}
+
+function syncTeacherControls() {
+  if (role !== "teacher") return;
+  document.getElementById("show-all-toggle").checked = !!state.showAll;
+  document.getElementById("strict-toggle").checked = !!state.strictMode;
+  document.getElementById("student-speaks").value = state.studentSpeaks || "B";
+}
+
+function renderSessionBar() {
+  const bar = document.getElementById("session-bar");
+  bar.innerHTML = "";
+
+  const badge = document.createElement("span");
+  badge.className = "role-badge " + role;
+  badge.textContent = role;
+  bar.appendChild(badge);
+
+  if (role === "single") {
+    const hint = document.createElement("span");
+    hint.style.color = "var(--ink-dim)";
+    hint.textContent = "Single-user mode";
+    bar.appendChild(hint);
+    return;
+  }
+
+  const idSpan = document.createElement("span");
+  idSpan.innerHTML = `session <code>${escapeHtml(SESSION_ID)}</code>`;
+  bar.appendChild(idSpan);
+
+  const conn = document.createElement("span");
+  conn.className = "conn connecting";
+  conn.id = "conn-status";
+  conn.textContent = "connecting";
+  bar.appendChild(conn);
+}
+
+function setConnStatus(status) {
+  const el = document.getElementById("conn-status");
+  if (!el) return;
+  el.className = "conn " + status;
+  el.textContent = status;
+}
+
+function showSetupNotice(html) {
+  const n = document.getElementById("setup-notice");
+  n.hidden = false;
+  n.innerHTML = html;
+}
+
+
+// =====================================================================
+// WIRE UP DOM
+// =====================================================================
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+document.getElementById("next").onclick        = nextDialog;
+document.getElementById("prev").onclick        = prevDialog;
+document.getElementById("replay").onclick      = replay;
+document.getElementById("reveal-all").onclick  = revealAll;
+document.getElementById("hide-all").onclick    = hideAll;
+document.getElementById("reveal-next").onclick = revealNextStep;
+
+window.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+  if (role === "student") return;
+  if (e.key === "ArrowRight") { e.preventDefault(); nextDialog(); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); prevDialog(); }
+  else if (e.key === " ") {
+    e.preventDefault();
+    if (e.shiftKey) hideLastStep(); else revealNextStep();
+  }
+});
+
+// Teacher-only controls
+if (role === "teacher") {
+  document.getElementById("teacher-controls").hidden = false;
+  document.getElementById("show-all-toggle").onchange = e => setShowAll(e.target.checked);
+  document.getElementById("strict-toggle").onchange   = e => setStrict(e.target.checked);
+  document.getElementById("student-speaks").onchange  = e => setStudentSpeaks(e.target.value);
+  document.getElementById("copy-link").onclick = async () => {
+    const u = new URL(window.location.href);
+    u.searchParams.set("role", "student");
+    try {
+      await navigator.clipboard.writeText(u.toString());
+      const s = document.getElementById("copy-status");
+      s.textContent = "copied!";
+      setTimeout(() => s.textContent = "", 1500);
+    } catch {
+      prompt("Copy this link:", u.toString());
+    }
+  };
+}
+
+if (role === "student") {
+  // Hide controls the student shouldn't touch
+  document.getElementById("next").style.display        = "none";
+  document.getElementById("prev").style.display        = "none";
+  document.getElementById("reveal-all").style.display  = "none";
+  document.getElementById("hide-all").style.display    = "none";
+  document.getElementById("reveal-next").style.display = "none";
+}
+
+
+// =====================================================================
+// INIT
+// =====================================================================
+// =====================================================================
+// WIZARD
+// =====================================================================
+function generateSessionId() {
+  const now = new Date();
+  const stamp = now.getFullYear().toString()
+              + String(now.getMonth() + 1).padStart(2, "0")
+              + String(now.getDate()).padStart(2, "0");
+  const suffix = Math.random().toString(36).slice(2, 6);
+  return `lesson-${stamp}-${suffix}`;
+}
+
+function showWizard() {
+  document.getElementById("wizard").hidden = false;
+  document.getElementById("app").hidden = true;
+
+  const sidInput = document.getElementById("wiz-session-id");
+  sidInput.value = generateSessionId();
+
+  document.getElementById("wiz-regen").onclick = () => { sidInput.value = generateSessionId(); };
+
+  document.getElementById("wiz-start").onclick = wizStart;
+  document.getElementById("wiz-join-teacher").onclick = () => wizJoin("teacher");
+  document.getElementById("wiz-join-student").onclick = () => wizJoin("student");
+  document.getElementById("wiz-skip").onclick = (e) => {
+    e.preventDefault();
+    // launch single-user mode without leaving the page
+    document.getElementById("wizard").hidden = true;
+    document.getElementById("app").hidden = false;
+    role = "single";
+    renderSessionBar();
+    syncToolbar();
+    nextDialog();
+  };
+
+  // Enter key in passcode submits
+  document.getElementById("wiz-passcode").addEventListener("keydown", e => {
+    if (e.key === "Enter") wizStart();
+  });
+}
+
+async function wizStart() {
+  const errEl = document.getElementById("wiz-error");
+  errEl.hidden = true;
+
+  const sid = document.getElementById("wiz-session-id").value.trim() || generateSessionId();
+  const pc  = document.getElementById("wiz-passcode").value;
+
+  if (!pc) {
+    errEl.textContent = "Passcode required.";
+    errEl.hidden = false;
+    return;
+  }
+
+  if (typeof firebase === "undefined") {
+    console.error("[E05] Backend SDK didn't load in wizard");
+    errEl.textContent = "Something went wrong: Code-E05";
+    errEl.hidden = false;
+    return;
+  }
+
+  // Initialize backend if not already
+  try {
+    if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  } catch (e) {
+    console.error("[E06] Init failed in wizard:", e);
+    errEl.textContent = "Something went wrong: Code-E06";
+    errEl.hidden = false;
+    return;
+  }
+
+  // Test the passcode by writing an initial dialog to /sessions/{sid}
+  const startBtn = document.getElementById("wiz-start");
+  startBtn.disabled = true;
+  startBtn.textContent = "Creating…";
+  try {
+    const ti = Math.floor(Math.random() * TEMPLATES.length);
+    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+    const initial = {
+      templateIdx: ti,
+      seed,
+      revealed: new Array(TEMPLATES[ti].speakers.length).fill(false),
+      showAll: false,
+      strictMode: false,
+      studentSpeaks: "B",
+      passcode: pc,
+    };
+    await firebase.database().ref("sessions/" + sid).set(initial);
+    // Success — save passcode and navigate to teacher view
+    localStorage.setItem("svenska_passcode", pc);
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set("session", sid);
+    newUrl.searchParams.set("role", "teacher");
+    window.location.href = newUrl.toString();
+  } catch (e) {
+    const msg = String(e);
+    if (msg.includes("PERMISSION_DENIED")) {
+      console.error("[E07] Wizard write rejected (passcode mismatch):", e);
+      errEl.textContent = "Wrong passcode.";
+    } else {
+      console.error("[E08] Wizard write failed:", e);
+      errEl.textContent = "Something went wrong: Code-E08";
+    }
+    errEl.hidden = false;
+  } finally {
+    startBtn.disabled = false;
+    startBtn.textContent = "Start session";
+  }
+}
+
+function wizJoin(joinRole) {
+  const errEl = document.getElementById("wiz-error");
+  errEl.hidden = true;
+  const sid = document.getElementById("wiz-join-id").value.trim();
+  if (!sid) {
+    errEl.textContent = "Enter a session ID to join.";
+    errEl.hidden = false;
+    return;
+  }
+  if (joinRole === "teacher") {
+    let pc = localStorage.getItem("svenska_passcode");
+    if (!pc) {
+      pc = prompt("Enter the session passcode:");
+      if (!pc) return;
+      localStorage.setItem("svenska_passcode", pc);
+    }
+  }
+  const newUrl = new URL(window.location.href);
+  newUrl.searchParams.set("session", sid);
+  newUrl.searchParams.set("role", joinRole);
+  window.location.href = newUrl.toString();
+}
+
+
+// =====================================================================
+// INIT — pick a path based on URL + Firebase config
+// =====================================================================
+if (_setupWarning) showSetupNotice(_setupWarning);
+
+if (!SESSION_ID && FIREBASE_CONFIGURED) {
+  // No session in URL → show the wizard
+  showWizard();
+} else {
+  // Either single-user mode or already in a session
+  document.getElementById("app").hidden = false;
+
+  // If teacher needs a passcode and none is stored, prompt
+  if (role === "teacher" && !localStorage.getItem("svenska_passcode")) {
+    const pc = prompt("Enter the session passcode:");
+    if (pc) localStorage.setItem("svenska_passcode", pc);
+  }
+
+  renderSessionBar();
+  syncToolbar();
+
+  if (role === "single") {
+    nextDialog();
+  } else {
+    initFirebase();
+  }
+}
+</script>
+</body>
+</html>

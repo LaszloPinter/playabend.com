@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Database — Svenska</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1e2330;
+    --ink: #e8ecf3;
+    --ink-dim: #98a2b3;
+    --accent: #6ee7b7;
+    --accent-2: #93c5fd;
+    --border: #262c3a;
+    --warn: #f59e0b;
+    --pill: #232938;
+    --pill-on: #2f3b54;
+    --pill-on-ink: #cfe8ff;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --panel-2: #f1f3f8;
+      --ink: #131722;
+      --ink-dim: #555c6a;
+      --accent: #0a7a47;
+      --accent-2: #1d4ed8;
+      --border: #e5e8ef;
+      --pill: #eef1f7;
+      --pill-on: #dbe7ff;
+      --pill-on-ink: #0a3b8a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; }
+  body { padding: 16px; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--ink-dim); font-size: 13px; margin-bottom: 16px; }
+  .site-title { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; font-weight: 600; }
+  .nav {
+    display: inline-flex; gap: 2px; margin-bottom: 18px;
+    padding: 3px; background: var(--panel); border: 1px solid var(--border); border-radius: 999px;
+  }
+  .nav a {
+    padding: 6px 14px; border-radius: 999px;
+    text-decoration: none; color: var(--ink-dim); font-size: 13px;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .nav a:hover { color: var(--ink); background: var(--panel-2); }
+  .nav a.active { background: var(--accent-2); color: white; }
+  .nav a.active:hover { background: var(--accent-2); }
+  .toolbar {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px; position: sticky; top: 8px; z-index: 10; backdrop-filter: blur(6px);
+  }
+  input[type="search"] {
+    flex: 1 1 220px; min-width: 0;
+    background: var(--panel-2); color: var(--ink); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; font-size: 15px; outline: none;
+  }
+  input[type="search"]:focus { border-color: var(--accent-2); }
+  button {
+    background: var(--panel-2); color: var(--ink); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer;
+  }
+  button:hover { background: var(--pill-on); }
+  button.primary { background: var(--accent-2); color: white; border-color: transparent; }
+  .count { color: var(--ink-dim); font-size: 13px; margin-left: auto; }
+
+  .cats {
+    display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0;
+  }
+  .cat {
+    background: var(--pill); color: var(--ink); border: 1px solid var(--border);
+    border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; user-select: none;
+  }
+  .cat.on { background: var(--pill-on); color: var(--pill-on-ink); border-color: var(--accent-2); }
+
+  .grid {
+    display: grid; gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer; transition: transform .05s ease;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .card:active { transform: scale(0.997); }
+  .card .sv { font-size: 16px; font-weight: 600; line-height: 1.35; }
+  .card .sv .alt { color: var(--ink-dim); font-weight: 400; }
+  .card .meta { color: var(--ink-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .card .tr { display: none; border-top: 1px dashed var(--border); padding-top: 6px; }
+  .card.show .tr { display: block; }
+  .card .en { font-size: 14px; color: var(--ink); }
+  .card .hu { font-size: 14px; color: var(--ink-dim); font-style: italic; }
+  .card .note { font-size: 12px; color: var(--warn); margin-top: 4px; }
+  .card.hidden { display: none; }
+
+  details.legend {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 8px 12px; margin: 12px 0; font-size: 13px; color: var(--ink-dim);
+  }
+  details.legend summary { cursor: pointer; color: var(--ink); }
+  details.legend ul { margin: 8px 0 0; padding-left: 18px; }
+  details.legend li { margin: 2px 0; }
+
+  footer { color: var(--ink-dim); font-size: 12px; margin: 24px 0 8px; text-align: center; }
+  kbd { background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="site-title">Svenska</div>
+<nav class="nav">
+  <a href="index.html" class="active">Database</a>
+  <a href="dialog.html">Dialog Session</a>
+  <a href="teacher-guide.html">Guide</a>
+</nav>
+<h1>Database</h1>
+<div class="sub">A searchable database of phrases for speed drilling. Tap any card to reveal the English and Hungarian translation. Aim: muscle memory, not new vocabulary.</div>
+
+<div class="toolbar">
+  <input id="q" type="search" placeholder="Search Swedish, English, or Hungarian…" autocomplete="off" autofocus>
+  <button id="reveal-all">Show all</button>
+  <button id="hide-all">Hide all</button>
+  <button id="shuffle" class="primary">Shuffle</button>
+  <span class="count" id="count"></span>
+</div>
+
+<div class="cats" id="cats"></div>
+
+<details class="legend">
+  <summary>Quick reference</summary>
+  <ul>
+    <li><b>i / på / vid / hos / till / från</b> — see "Prepositions"</li>
+    <li><b>min/mitt/mina, din/ditt/dina, sin/sitt/sina, vår/vårt/våra, er/ert/era</b> — see "Possessives"</li>
+    <li><b>vem / vad / var / vart / varifrån / vilken / hur / när / varför</b> — see "Question words"</li>
+    <li><b>"i 4 år" vs "för 4 år sedan" vs "sedan 2022" vs "på 4 år"</b> — see "Time"</li>
+    <li><b>"klockan halv 5" = 4:30</b> — see "Time / clock"</li>
+  </ul>
+</details>
+
+<div class="grid" id="grid"></div>
+
+<footer>Click <kbd>/</kbd> to focus search · Tap a card to reveal</footer>
+
+<script>
+// =====================================================================
+// DATA — every item is one drill atom.
+//   sv: Swedish (what you say)
+//   en: English meaning
+//   hu: Hungarian gloss (target audience speaks Hungarian)
+//   cat: category key
+//   note (optional): grammar reminder, principal parts, or "watch out"
+// =====================================================================
+const CATEGORIES = [
+  { key: "pron",    label: "Pronouns" },
+  { key: "poss",    label: "Possessives" },
+  { key: "refl",    label: "Reflexive / sig" },
+  { key: "prep",    label: "Prepositions" },
+  { key: "qword",   label: "Question words" },
+  { key: "time",    label: "Time / clock" },
+  { key: "days",    label: "Days / weeks / dates" },
+  { key: "modal",   label: "Modal verbs" },
+  { key: "verb",    label: "Common verbs" },
+  { key: "conn",    label: "Connectors" },
+  { key: "adv",     label: "Adverbs / fillers" },
+  { key: "resp",    label: "Short responses" },
+  { key: "intro",   label: "Introducing yourself" },
+  { key: "smalltalk", label: "Daily small talk" },
+  { key: "coffee",  label: "Café / takeaway" },
+  { key: "shop",    label: "Shopping / paying" },
+  { key: "work",    label: "Work / office" },
+  { key: "home",    label: "Housing / address" },
+  { key: "bureau",  label: "Bureaucracy / admin" },
+  { key: "weather", label: "Weather" },
+  { key: "plans",   label: "Plans / suggestions" },
+];
+
+const ITEMS = [
+  // ---------- PRONOUNS ----------
+  { sv:"jag / mig", en:"I / me", hu:"én / engem", cat:"pron" },
+  { sv:"du / dig", en:"you / you (obj)", hu:"te / téged", cat:"pron" },
+  { sv:"han / honom", en:"he / him", hu:"ő / őt (férfi)", cat:"pron" },
+  { sv:"hon / henne", en:"she / her", hu:"ő / őt (nő)", cat:"pron" },
+  { sv:"den / det", en:"it (en-word / ett-word)", hu:"az (en/ett szavakra)", cat:"pron", note:"den for en-words, det for ett-words" },
+  { sv:"vi / oss", en:"we / us", hu:"mi / minket", cat:"pron" },
+  { sv:"ni / er", en:"you (pl) / you (obj pl)", hu:"ti / titeket", cat:"pron" },
+  { sv:"de / dem", en:"they / them", hu:"ők / őket", cat:"pron", note:"both pronounced 'dom' in speech" },
+  { sv:"man", en:"one / you (general)", hu:"általános alany ('az ember')", cat:"pron" },
+
+  // ---------- POSSESSIVES ----------
+  { sv:"min, mitt, mina", en:"my", hu:"az enyém / -m birtokrag", cat:"poss", note:"min bil, mitt hus, mina barn" },
+  { sv:"din, ditt, dina", en:"your (sg)", hu:"a tied / -d birtokrag", cat:"poss", note:"din bil, ditt hus, dina barn" },
+  { sv:"hans", en:"his (someone else's)", hu:"az ő (férfi) — nem visszaható", cat:"poss" },
+  { sv:"hennes", en:"her (someone else's)", hu:"az ő (nő) — nem visszaható", cat:"poss" },
+  { sv:"vår, vårt, våra", en:"our", hu:"a miénk", cat:"poss" },
+  { sv:"er, ert, era", en:"your (pl) / your (formal)", hu:"a tiétek", cat:"poss", note:"matches ni" },
+  { sv:"deras", en:"their", hu:"az övék (más alanyra)", cat:"poss" },
+  { sv:"sin, sitt, sina", en:"his/her/their (own — same as subject)", hu:"saját — az alany sajátja", cat:"poss", note:"Han läser sin bok = Jan reads Jan's own book. Han läser hans bok = Jan reads someone else's." },
+
+  // ---------- REFLEXIVE ----------
+  { sv:"mig (själv)", en:"myself", hu:"engem (magam)", cat:"refl" },
+  { sv:"dig (själv)", en:"yourself", hu:"téged (magadat)", cat:"refl" },
+  { sv:"sig (själv)", en:"himself / herself / themselves", hu:"magát / magukat", cat:"refl" },
+  { sv:"oss (själva)", en:"ourselves", hu:"minket (magunkat)", cat:"refl" },
+  { sv:"er (själva)", en:"yourselves", hu:"titeket (magatokat)", cat:"refl" },
+  { sv:"hon tvättar sig", en:"she washes (herself)", hu:"mosakszik", cat:"refl" },
+  { sv:"han tar med sig sin väska", en:"he brings his (own) bag with him", hu:"magával viszi a saját táskáját", cat:"refl", note:"med sig + sin = double reflexive" },
+  { sv:"jag känner mig trött", en:"I feel tired", hu:"fáradtnak érzem magam", cat:"refl" },
+  { sv:"hon lägger sig", en:"she lies down / goes to bed", hu:"lefekszik", cat:"refl", note:"lägger sig, la sig, har lagt sig" },
+  { sv:"de bestämmer sig", en:"they decide / make up their mind", hu:"döntenek", cat:"refl" },
+  { sv:"jag bryr mig inte", en:"I don't care", hu:"nem érdekel", cat:"refl" },
+  { sv:"vi träffades", en:"we met (each other)", hu:"találkoztunk", cat:"refl", note:"-s ending = reciprocal" },
+
+  // ---------- PREPOSITIONS ----------
+  { sv:"i", en:"in (inside / period of time)", hu:"-ban/-ben; idôtartam", cat:"prep", note:"i Sverige, i 3 år, i bilen" },
+  { sv:"på", en:"on / at (surface, certain places, language)", hu:"-on/-en/-ön; bizonyos helyek", cat:"prep", note:"på bordet, på jobbet, på svenska, på fredag" },
+  { sv:"vid", en:"by / next to / at (a point)", hu:"mellett, -nál/-nél", cat:"prep", note:"vid bordet, vid havet, vid 5-tiden" },
+  { sv:"hos", en:"at someone's place / chez", hu:"-nál/-nél (vkinél)", cat:"prep", note:"hos läkaren, hos oss" },
+  { sv:"till", en:"to (direction / for someone)", hu:"-hoz/-hez/-höz; -ra/-re", cat:"prep", note:"till jobbet, till dig" },
+  { sv:"från", en:"from", hu:"-ból/-ből; -tól/-től", cat:"prep" },
+  { sv:"av", en:"of / by (agent) / off", hu:"-tól (passzív); valamiből készült", cat:"prep", note:"gjord av trä, en bok av Astrid" },
+  { sv:"för", en:"for / ago (with sedan)", hu:"-ért; -val/vel ezelőtt", cat:"prep", note:"för dig, för 3 år sedan" },
+  { sv:"med", en:"with", hu:"-val/-vel", cat:"prep" },
+  { sv:"utan", en:"without", hu:"nélkül", cat:"prep" },
+  { sv:"om", en:"about / in (future time) / if", hu:"-ról/-ről; múlva; ha", cat:"prep", note:"om dig, om 2 år, om jag kan" },
+  { sv:"genom / igenom", en:"through", hu:"keresztül, át", cat:"prep" },
+  { sv:"under", en:"under / during", hu:"alatt; közben", cat:"prep" },
+  { sv:"över", en:"over / above / across", hu:"fölött; át", cat:"prep" },
+  { sv:"mellan", en:"between", hu:"között", cat:"prep" },
+  { sv:"bakom", en:"behind", hu:"mögött", cat:"prep" },
+  { sv:"framför", en:"in front of", hu:"előtt", cat:"prep" },
+  { sv:"bredvid", en:"next to", hu:"mellett", cat:"prep" },
+  { sv:"nära", en:"close to", hu:"közel", cat:"prep" },
+  { sv:"långt från", en:"far from", hu:"messze -tól/-től", cat:"prep" },
+  { sv:"inuti", en:"inside (of)", hu:"belül", cat:"prep", note:"inuti = inside of something; inomhus = indoors" },
+  { sv:"utanför", en:"outside (of)", hu:"kívül", cat:"prep" },
+  { sv:"strax utanför", en:"just outside / right outside", hu:"épp kívül", cat:"prep" },
+  { sv:"mot", en:"toward / against", hu:"felé; ellen", cat:"prep" },
+  { sv:"åt", en:"to / for (someone's benefit) / toward", hu:"-ért, -nek, -felé", cat:"prep", note:"hämta medicin åt min fru = pick up medicine for my wife" },
+  { sv:"vart", en:"to where (direction)", hu:"hova", cat:"prep" },
+  { sv:"hit / dit / hem", en:"to here / to there / homewards", hu:"ide / oda / haza", cat:"prep" },
+  { sv:"här / där / hemma", en:"here / there / at home", hu:"itt / ott / otthon", cat:"prep" },
+  { sv:"härifrån / därifrån / hemifrån", en:"from here / from there / from home", hu:"innen / onnan / otthonról", cat:"prep" },
+
+  // ---------- QUESTION WORDS ----------
+  { sv:"vem", en:"who", hu:"ki", cat:"qword" },
+  { sv:"vad", en:"what", hu:"mit / mi", cat:"qword" },
+  { sv:"var", en:"where (location)", hu:"hol", cat:"qword" },
+  { sv:"vart", en:"where to (direction)", hu:"hova", cat:"qword" },
+  { sv:"varifrån", en:"from where", hu:"honnan", cat:"qword" },
+  { sv:"vilken / vilket / vilka", en:"which (en / ett / pl)", hu:"melyik (en / ett / tsz)", cat:"qword" },
+  { sv:"hur", en:"how", hu:"hogyan", cat:"qword" },
+  { sv:"när", en:"when (general)", hu:"mikor (általában)", cat:"qword" },
+  { sv:"vilken tid", en:"what time (exactly)", hu:"hány órakor (pontosan)", cat:"qword" },
+  { sv:"varför", en:"why", hu:"miért", cat:"qword" },
+  { sv:"hur mycket", en:"how much", hu:"mennyi", cat:"qword" },
+  { sv:"hur många", en:"how many", hu:"hány", cat:"qword" },
+  { sv:"hur länge", en:"how long (duration)", hu:"meddig (időtartam)", cat:"qword" },
+  { sv:"hur ofta", en:"how often", hu:"milyen gyakran", cat:"qword" },
+  { sv:"hur långt", en:"how far (distance)", hu:"milyen messze", cat:"qword" },
+  { sv:"vad för (typ av)", en:"what kind of", hu:"milyen / milyen típusú", cat:"qword" },
+
+  // ---------- TIME ----------
+  { sv:"idag", en:"today", hu:"ma", cat:"time" },
+  { sv:"igår", en:"yesterday", hu:"tegnap", cat:"time" },
+  { sv:"i förrgår", en:"day before yesterday", hu:"tegnapelőtt", cat:"time" },
+  { sv:"imorgon", en:"tomorrow", hu:"holnap", cat:"time" },
+  { sv:"i övermorgon", en:"day after tomorrow", hu:"holnapután", cat:"time" },
+  { sv:"i morse", en:"this morning (earlier today)", hu:"ma reggel (már elmúlt)", cat:"time" },
+  { sv:"i eftermiddag", en:"this afternoon", hu:"ma délután", cat:"time" },
+  { sv:"ikväll", en:"this evening / tonight", hu:"ma este", cat:"time" },
+  { sv:"inatt", en:"tonight (later) / last night", hu:"az éjjel", cat:"time" },
+  { sv:"på morgonen", en:"in the morning", hu:"reggel", cat:"time" },
+  { sv:"på förmiddagen", en:"in the late morning", hu:"délelőtt", cat:"time" },
+  { sv:"på eftermiddagen", en:"in the afternoon", hu:"délután", cat:"time" },
+  { sv:"på kvällen", en:"in the evening", hu:"este", cat:"time" },
+  { sv:"på natten", en:"at night", hu:"éjjel", cat:"time" },
+  { sv:"klockan halv 5", en:"4:30 (half-to-5)", hu:"fél 5", cat:"time", note:"halv X = X minus 30 — Swedish 'looks forward' to the next hour" },
+  { sv:"klockan kvart över 5", en:"5:15", hu:"negyed 6 (de svédül: kvart över 5)", cat:"time" },
+  { sv:"klockan kvart i 5", en:"4:45", hu:"háromnegyed 5 (svédül: kvart i 5)", cat:"time" },
+  { sv:"klockan fem i halv 5", en:"4:25 (5 minutes to half-5)", hu:"5 perccel fél 5 előtt", cat:"time" },
+  { sv:"klockan tio över halv 5", en:"4:40 (10 over half-5)", hu:"10 perccel fél 5 után", cat:"time" },
+  { sv:"vid 5-tiden", en:"around 5 o'clock", hu:"5 óra körül", cat:"time" },
+  { sv:"för 4 år sedan", en:"4 years ago", hu:"4 évvel ezelőtt", cat:"time", note:"för + duration + sedan = ago" },
+  { sv:"i 4 år", en:"for 4 years (ongoing)", hu:"4 évig (állító, folyamatos)", cat:"time", note:"present perfect duration: 'Jag har bott här i 4 år.'" },
+  { sv:"på 4 år", en:"in 4 years / for 4 years (negation)", hu:"4 év alatt / 4 éve nem", cat:"time", note:"Jag har inte sett henne på 4 år. = I haven't seen her for 4 years." },
+  { sv:"sedan 2022", en:"since 2022", hu:"2022 óta", cat:"time", note:"'Jag har bott här sedan 2022.'" },
+  { sv:"om 4 år", en:"in 4 years (future)", hu:"4 év múlva", cat:"time" },
+  { sv:"de senaste 2 åren", en:"the past 2 years", hu:"az utóbbi 2 évben", cat:"time" },
+  { sv:"jag har läst svenska i 4 år", en:"I have been studying Swedish for 4 years", hu:"4 éve tanulok svédül", cat:"time" },
+  { sv:"jag har bott i Sverige sedan 2019", en:"I have lived in Sweden since 2019", hu:"2019 óta élek Svédországban", cat:"time" },
+  { sv:"jag började läsa svenska för 4 år sedan", en:"I started studying Swedish 4 years ago", hu:"4 éve kezdtem svédül tanulni", cat:"time" },
+  { sv:"nu", en:"now", hu:"most", cat:"time" },
+  { sv:"snart", en:"soon", hu:"hamarosan", cat:"time" },
+  { sv:"strax", en:"in a moment / right (next to)", hu:"mindjárt / közvetlenül", cat:"time" },
+  { sv:"redan", en:"already", hu:"már", cat:"time" },
+  { sv:"än / ännu", en:"yet / still (with negation 'än')", hu:"még", cat:"time", note:"Jag har inte ätit än. = I haven't eaten yet." },
+  { sv:"fortfarande", en:"still", hu:"még mindig", cat:"time" },
+  { sv:"inte längre / inte (nu) längre", en:"not anymore", hu:"már nem", cat:"time" },
+  { sv:"tidigare", en:"earlier / previously", hu:"korábban", cat:"time" },
+  { sv:"senare", en:"later", hu:"később", cat:"time" },
+
+  // ---------- DAYS / WEEKS / DATES ----------
+  { sv:"måndag, tisdag, onsdag, torsdag, fredag, lördag, söndag", en:"days of the week", hu:"a hét napjai", cat:"days" },
+  { sv:"i måndags / i tisdags / i onsdags…", en:"last Monday / Tuesday / Wednesday…", hu:"múlt hétfőn / kedden / szerdán…", cat:"days", note:"past — with the -s ending" },
+  { sv:"på måndag / på tisdag…", en:"this/next Monday / Tuesday…", hu:"hétfőn / kedden… (jövő)", cat:"days" },
+  { sv:"på måndagar / på tisdagar…", en:"on Mondays / Tuesdays… (habitually)", hu:"hétfőnként / keddenként…", cat:"days" },
+  { sv:"i veckan", en:"this week / per week", hu:"a héten / hetente", cat:"days" },
+  { sv:"förra veckan / förra månaden / förra året", en:"last week / month / year", hu:"múlt héten / hónapban / évben", cat:"days" },
+  { sv:"nästa vecka / nästa månad / nästa år", en:"next week / month / year", hu:"jövő héten / hónapban / évben", cat:"days" },
+  { sv:"varje vecka", en:"every week", hu:"minden héten", cat:"days" },
+  { sv:"varannan vecka", en:"every other week", hu:"kéthetente", cat:"days" },
+  { sv:"var tredje vecka", en:"every third week", hu:"háromhetente", cat:"days" },
+  { sv:"i januari / i februari…", en:"in January / February…", hu:"januárban / februárban…", cat:"days" },
+  { sv:"på sommaren / på vintern / på våren / på hösten", en:"in summer / winter / spring / autumn", hu:"nyáron / télen / tavasszal / ősszel", cat:"days" },
+  { sv:"den 9:e mars", en:"the 9th of March", hu:"március 9-én", cat:"days" },
+  { sv:"år 2022 / år 2026", en:"the year 2022 / 2026", hu:"2022-ben / 2026-ban", cat:"days" },
+  { sv:"på 60-talet", en:"in the 60s", hu:"a 60-as években", cat:"days" },
+  { sv:"5 gånger i veckan", en:"5 times a week", hu:"hetente 5-ször", cat:"days" },
+  { sv:"… i minuten / i timmen / om dagen / i veckan / i månaden / om året", en:"per minute / hour / day / week / month / year", hu:"percenként / óránként / naponta / hetente / havonta / évente", cat:"days" },
+
+  // ---------- MODAL VERBS ----------
+  { sv:"kan", en:"can / am able to", hu:"tudok / képes vagyok", cat:"modal", note:"kan, kunde, har kunnat" },
+  { sv:"vill", en:"want to", hu:"akarok", cat:"modal", note:"vill, ville, har velat. 'jag vill köpa' (no att)" },
+  { sv:"ska", en:"will / shall / am going to (planned)", hu:"fogok (terv)", cat:"modal", note:"ska, skulle" },
+  { sv:"skulle", en:"would / was going to", hu:"-nék/-nák; akartam volna", cat:"modal" },
+  { sv:"måste", en:"must / have to", hu:"muszáj / kell", cat:"modal" },
+  { sv:"behöver", en:"need to", hu:"szükségem van rá / kell", cat:"modal", note:"behöver, behövde, har behövt — 'jag behöver köpa' (no att)" },
+  { sv:"borde", en:"should / ought to", hu:"kellene", cat:"modal" },
+  { sv:"får", en:"may / is allowed / has to (context)", hu:"szabad / lehet / kell (kontextus)", cat:"modal", note:"får inte = not allowed" },
+  { sv:"hinner", en:"have time to / make it in time", hu:"van időm rá / odaérek", cat:"modal", note:"hinner, hann, har hunnit" },
+  { sv:"orkar", en:"have the energy to / can be bothered", hu:"van erőm / bírom", cat:"modal" },
+  { sv:"brukar", en:"usually do (habit)", hu:"szoktam", cat:"modal", note:"jag brukar äta frukost kl 7" },
+
+  // ---------- COMMON VERBS (principal parts) ----------
+  { sv:"att vara — är, var, har varit", en:"to be — am, was, have been", hu:"lenni", cat:"verb" },
+  { sv:"att ha — har, hade, har haft", en:"to have", hu:"-nak/-nek van", cat:"verb" },
+  { sv:"att göra — gör, gjorde, har gjort", en:"to do / make", hu:"csinálni", cat:"verb" },
+  { sv:"att gå — går, gick, har gått", en:"to go / walk", hu:"menni / sétálni", cat:"verb" },
+  { sv:"att komma — kommer, kom, har kommit", en:"to come", hu:"jönni", cat:"verb" },
+  { sv:"att åka — åker, åkte, har åkt", en:"to go (by vehicle)", hu:"menni (járművel)", cat:"verb" },
+  { sv:"att ta — tar, tog, har tagit", en:"to take", hu:"venni / fogni", cat:"verb" },
+  { sv:"att ge — ger, gav, har gett", en:"to give", hu:"adni", cat:"verb" },
+  { sv:"att se — ser, såg, har sett", en:"to see", hu:"látni", cat:"verb" },
+  { sv:"att säga — säger, sade/sa, har sagt", en:"to say", hu:"mondani", cat:"verb" },
+  { sv:"att veta — vet, visste, har vetat", en:"to know (a fact)", hu:"tudni (tényt)", cat:"verb" },
+  { sv:"att känna — känner, kände, har känt", en:"to know (person) / to feel", hu:"ismerni / érezni", cat:"verb" },
+  { sv:"att kunna — kan, kunde, har kunnat", en:"to be able / know how", hu:"tudni (-ni)", cat:"verb" },
+  { sv:"att tycka — tycker, tyckte, har tyckt", en:"to think / have opinion", hu:"vélni / gondolni (vélemény)", cat:"verb" },
+  { sv:"att tro — tror, trodde, har trott", en:"to believe / think (uncertain)", hu:"hinni", cat:"verb" },
+  { sv:"att tänka — tänker, tänkte, har tänkt", en:"to think (process) / plan to", hu:"gondolkodni / tervezni", cat:"verb" },
+  { sv:"att få — får, fick, har fått", en:"to get / be allowed / have to", hu:"kapni / szabad / kell", cat:"verb" },
+  { sv:"att vilja — vill, ville, har velat", en:"to want", hu:"akarni", cat:"verb" },
+  { sv:"att börja — börjar, började, har börjat", en:"to start", hu:"kezdeni", cat:"verb" },
+  { sv:"att sluta — slutar, slutade, har slutat", en:"to stop / finish / quit", hu:"abbahagyni / befejezni", cat:"verb" },
+  { sv:"att bo — bor, bodde, har bott", en:"to live (reside)", hu:"lakni", cat:"verb" },
+  { sv:"att jobba — jobbar, jobbade, har jobbat", en:"to work", hu:"dolgozni", cat:"verb" },
+  { sv:"att äta — äter, åt, har ätit", en:"to eat", hu:"enni", cat:"verb" },
+  { sv:"att dricka — dricker, drack, har druckit", en:"to drink", hu:"inni", cat:"verb" },
+  { sv:"att lära sig — lär sig, lärde sig, har lärt sig", en:"to learn", hu:"tanulni (megtanulni)", cat:"verb" },
+  { sv:"att läsa — läser, läste, har läst", en:"to read / study", hu:"olvasni / tanulni", cat:"verb" },
+  { sv:"att skriva — skriver, skrev, har skrivit", en:"to write", hu:"írni", cat:"verb" },
+  { sv:"att prata / tala — pratar, pratade, har pratat", en:"to talk / speak", hu:"beszélni", cat:"verb" },
+  { sv:"att förstå — förstår, förstod, har förstått", en:"to understand", hu:"érteni", cat:"verb" },
+  { sv:"att träffa — träffar, träffade, har träffat", en:"to meet", hu:"találkozni vkivel", cat:"verb" },
+  { sv:"att hjälpa — hjälper, hjälpte, har hjälpt", en:"to help", hu:"segíteni", cat:"verb" },
+  { sv:"att hitta — hittar, hittade, har hittat", en:"to find", hu:"megtalálni", cat:"verb" },
+  { sv:"att leta efter", en:"to look for", hu:"keresni vmit", cat:"verb" },
+  { sv:"att titta på", en:"to look at / watch", hu:"nézni vmit", cat:"verb" },
+  { sv:"att tycka om / gilla", en:"to like", hu:"szeretni / kedvelni", cat:"verb" },
+  { sv:"att tro på / lita på", en:"to believe in / to trust", hu:"hinni vmiben / megbízni vkiben", cat:"verb" },
+  { sv:"att be om", en:"to ask for (request)", hu:"kérni (vmit)", cat:"verb", note:"att be, ber, bad, har bett" },
+  { sv:"att fråga efter / fråga om", en:"to ask about", hu:"kérdezni vmiről", cat:"verb" },
+  { sv:"att tänka på", en:"to think about", hu:"gondolni vmire", cat:"verb" },
+  { sv:"att hänga med", en:"to keep up / follow along", hu:"követni (érti, miről van szó)", cat:"verb", note:"hänger du med? = are you following?" },
+
+  // ---------- CONNECTORS ----------
+  { sv:"och", en:"and", hu:"és", cat:"conn" },
+  { sv:"eller", en:"or", hu:"vagy", cat:"conn" },
+  { sv:"men", en:"but", hu:"de", cat:"conn" },
+  { sv:"så", en:"so", hu:"tehát", cat:"conn" },
+  { sv:"för", en:"because (coord.)", hu:"mert", cat:"conn" },
+  { sv:"eftersom", en:"since / because", hu:"mivel", cat:"conn", note:"subordinate — verb stays after subject" },
+  { sv:"därför att", en:"because", hu:"azért, mert", cat:"conn" },
+  { sv:"därför", en:"that's why / therefore", hu:"ezért", cat:"conn" },
+  { sv:"om", en:"if", hu:"ha", cat:"conn" },
+  { sv:"när", en:"when (subordinate)", hu:"amikor", cat:"conn" },
+  { sv:"fast / fastän", en:"although", hu:"habár", cat:"conn" },
+  { sv:"även om", en:"even if", hu:"még ha", cat:"conn" },
+  { sv:"innan", en:"before (subordinator)", hu:"mielőtt", cat:"conn" },
+  { sv:"efter att", en:"after (subordinator)", hu:"miután", cat:"conn" },
+  { sv:"medan", en:"while", hu:"miközben", cat:"conn" },
+  { sv:"tills", en:"until", hu:"amíg / -ig", cat:"conn" },
+  { sv:"för att", en:"in order to / so that", hu:"azért hogy", cat:"conn" },
+  { sv:"istället för", en:"instead of", hu:"helyett", cat:"conn" },
+  { sv:"annars", en:"otherwise", hu:"különben", cat:"conn" },
+  { sv:"ändå", en:"anyway / still", hu:"mégis", cat:"conn" },
+  { sv:"dessutom", en:"besides / moreover", hu:"ráadásul", cat:"conn" },
+  { sv:"alltså", en:"so / thus", hu:"vagyis", cat:"conn" },
+  { sv:"såvitt jag vet", en:"as far as I know", hu:"amennyire tudom", cat:"conn" },
+  { sv:"antingen … eller …", en:"either … or …", hu:"vagy … vagy …", cat:"conn" },
+  { sv:"varken … eller …", en:"neither … nor …", hu:"sem … sem …", cat:"conn" },
+  { sv:"både … och …", en:"both … and …", hu:"… is és … is", cat:"conn" },
+  { sv:"inte heller", en:"not either / nor", hu:"sem", cat:"conn" },
+
+  // ---------- ADVERBS / FILLERS ----------
+  { sv:"alltid", en:"always", hu:"mindig", cat:"adv" },
+  { sv:"ofta", en:"often", hu:"gyakran", cat:"adv" },
+  { sv:"ibland", en:"sometimes", hu:"néha", cat:"adv" },
+  { sv:"sällan", en:"rarely", hu:"ritkán", cat:"adv" },
+  { sv:"aldrig", en:"never", hu:"soha", cat:"adv" },
+  { sv:"någonsin", en:"ever (in questions / negatives)", hu:"valaha (kérdés/tagadás)", cat:"adv" },
+  { sv:"bara", en:"only / just", hu:"csak", cat:"adv" },
+  { sv:"kanske", en:"maybe", hu:"talán", cat:"adv" },
+  { sv:"säkert", en:"surely / probably", hu:"biztosan", cat:"adv" },
+  { sv:"nog", en:"probably / I suppose", hu:"valószínűleg", cat:"adv" },
+  { sv:"verkligen", en:"really", hu:"tényleg", cat:"adv" },
+  { sv:"faktiskt", en:"actually", hu:"valójában", cat:"adv" },
+  { sv:"förresten", en:"by the way", hu:"egyébként / apropó", cat:"adv" },
+  { sv:"alldeles / helt", en:"completely / entirely", hu:"teljesen", cat:"adv" },
+  { sv:"ungefär", en:"approximately", hu:"körülbelül", cat:"adv" },
+  { sv:"någonstans / någon annanstans", en:"somewhere / somewhere else", hu:"valahol / valahol máshol", cat:"adv" },
+  { sv:"ingenstans", en:"nowhere", hu:"sehol", cat:"adv" },
+  { sv:"var som helst / när som helst / vem som helst / vad som helst", en:"anywhere / anytime / anyone / anything", hu:"bárhol / bármikor / bárki / bármi", cat:"adv" },
+  { sv:"någon / något / några", en:"someone / something / some", hu:"valaki / valami / néhány", cat:"adv" },
+  { sv:"ingen / inget / inga", en:"no one / nothing / no (pl)", hu:"senki / semmi / egy se", cat:"adv" },
+
+  // ---------- SHORT RESPONSES ----------
+  { sv:"Ja, det är det.", en:"Yes, it is.", hu:"Igen, az.", cat:"resp", note:"echo with 'det' + matching verb" },
+  { sv:"Nej, det är det inte.", en:"No, it isn't.", hu:"Nem, nem az.", cat:"resp" },
+  { sv:"Ja, det har jag.", en:"Yes, I have.", hu:"Igen, van/megtettem.", cat:"resp" },
+  { sv:"Nej, det har jag inte.", en:"No, I haven't.", hu:"Nem, nincs / nem tettem.", cat:"resp" },
+  { sv:"Ja, det gör jag.", en:"Yes, I do.", hu:"Igen, így van.", cat:"resp" },
+  { sv:"Nej, det gör jag inte.", en:"No, I don't.", hu:"Nem, nem teszem.", cat:"resp" },
+  { sv:"Ja, det vill jag.", en:"Yes, I want to.", hu:"Igen, akarom.", cat:"resp" },
+  { sv:"Nej, det vill jag inte.", en:"No, I don't want to.", hu:"Nem, nem akarom.", cat:"resp" },
+  { sv:"Det stämmer.", en:"That's right.", hu:"Stimmel.", cat:"resp" },
+  { sv:"Precis!", en:"Exactly!", hu:"Pontosan!", cat:"resp" },
+  { sv:"Visst.", en:"Sure.", hu:"Persze.", cat:"resp" },
+  { sv:"Självklart!", en:"Of course!", hu:"Természetesen!", cat:"resp" },
+  { sv:"Tyvärr.", en:"Unfortunately.", hu:"Sajnos.", cat:"resp" },
+  { sv:"Lyckligtvis / Som tur är", en:"Fortunately", hu:"Szerencsére", cat:"resp" },
+  { sv:"Eller hur?", en:"Right? / isn't it?", hu:"Ugye?", cat:"resp" },
+  { sv:"Det beror på.", en:"It depends.", hu:"Attól függ.", cat:"resp" },
+  { sv:"Vi får se.", en:"We'll see.", hu:"Meglátjuk.", cat:"resp" },
+  { sv:"Det är klart.", en:"Of course / Sure.", hu:"Persze / Világos.", cat:"resp" },
+  { sv:"Det gör inget.", en:"It doesn't matter.", hu:"Nem tesz semmit.", cat:"resp" },
+  { sv:"Inga problem.", en:"No problem.", hu:"Semmi gond.", cat:"resp" },
+  { sv:"Det spelar ingen roll.", en:"It doesn't make a difference.", hu:"Mindegy / nem számít.", cat:"resp" },
+
+  // ---------- INTRODUCING YOURSELF ----------
+  { sv:"Hej, jag heter Anna.", en:"Hi, my name is Anna.", hu:"Szia, Anna vagyok.", cat:"intro" },
+  { sv:"Vad heter du?", en:"What's your name?", hu:"Hogy hívnak?", cat:"intro" },
+  { sv:"Trevligt att träffas.", en:"Nice to meet you.", hu:"Örvendek.", cat:"intro" },
+  { sv:"Jag kommer från Ungern.", en:"I come from Hungary.", hu:"Magyarországról jövök.", cat:"intro" },
+  { sv:"Var kommer du ifrån?", en:"Where do you come from?", hu:"Honnan jössz?", cat:"intro" },
+  { sv:"Jag är ungrare.", en:"I'm Hungarian.", hu:"Magyar vagyok.", cat:"intro" },
+  { sv:"Jag bor i Sverige.", en:"I live in Sweden.", hu:"Svédországban élek.", cat:"intro" },
+  { sv:"Jag har bott i Sverige i 4 år.", en:"I have lived in Sweden for 4 years.", hu:"4 éve Svédországban élek.", cat:"intro" },
+  { sv:"Jag har bott här sedan 2019.", en:"I have lived here since 2019.", hu:"2019 óta itt élek.", cat:"intro" },
+  { sv:"Hur länge har du bott här?", en:"How long have you lived here?", hu:"Mióta laksz itt?", cat:"intro" },
+  { sv:"Vad jobbar du med?", en:"What do you do for work?", hu:"Mivel foglalkozol?", cat:"intro" },
+  { sv:"Jag jobbar som mjukvaruutvecklare.", en:"I work as a software developer.", hu:"Szoftverfejlesztőként dolgozom.", cat:"intro" },
+  { sv:"Jag pratar ungerska, engelska och lite svenska.", en:"I speak Hungarian, English, and a little Swedish.", hu:"Magyarul, angolul és egy kicsit svédül beszélek.", cat:"intro" },
+  { sv:"Jag har läst svenska i 4 år.", en:"I've been studying Swedish for 4 years.", hu:"4 éve tanulok svédül.", cat:"intro" },
+  { sv:"Kan du prata lite långsammare, tack?", en:"Can you speak a little slower, please?", hu:"Tudnál egy kicsit lassabban beszélni?", cat:"intro" },
+  { sv:"Kan du upprepa det?", en:"Can you repeat that?", hu:"Megismételnéd?", cat:"intro" },
+  { sv:"Jag förstår inte.", en:"I don't understand.", hu:"Nem értem.", cat:"intro" },
+  { sv:"Jag vet inte vad det heter på svenska.", en:"I don't know what it's called in Swedish.", hu:"Nem tudom, ezt hogy hívják svédül.", cat:"intro" },
+  { sv:"Hur säger man … på svenska?", en:"How do you say … in Swedish?", hu:"Hogy mondják svédül, hogy …?", cat:"intro" },
+
+  // ---------- DAILY SMALL TALK ----------
+  { sv:"Hej! Hur är det?", en:"Hi! How are you?", hu:"Szia! Hogy vagy?", cat:"smalltalk" },
+  { sv:"Hur har du haft det?", en:"How have you been?", hu:"Hogy vagy / hogy ment mostanában?", cat:"smalltalk" },
+  { sv:"Tack, bra. Och du?", en:"Thanks, good. And you?", hu:"Köszi, jól. És te?", cat:"smalltalk" },
+  { sv:"Det är lugnt.", en:"It's all good / chill.", hu:"Nyugi, minden oké.", cat:"smalltalk" },
+  { sv:"Vad har du gjort idag?", en:"What have you done today?", hu:"Mit csináltál ma?", cat:"smalltalk" },
+  { sv:"Vad ska du göra ikväll?", en:"What are you doing tonight?", hu:"Mit csinálsz ma este?", cat:"smalltalk" },
+  { sv:"Vad gör du i helgen?", en:"What are you doing this weekend?", hu:"Mit csinálsz a hétvégén?", cat:"smalltalk" },
+  { sv:"Har du tid imorgon?", en:"Do you have time tomorrow?", hu:"Ráérsz holnap?", cat:"smalltalk" },
+  { sv:"Är du hungrig?", en:"Are you hungry?", hu:"Éhes vagy?", cat:"smalltalk" },
+  { sv:"Är du trött?", en:"Are you tired?", hu:"Fáradt vagy?", cat:"smalltalk" },
+  { sv:"Lagar du mat ikväll?", en:"Are you cooking tonight?", hu:"Főzöl ma este?", cat:"smalltalk" },
+  { sv:"Hur var din dag?", en:"How was your day?", hu:"Milyen napod volt?", cat:"smalltalk" },
+  { sv:"Det var länge sedan.", en:"It's been a while.", hu:"Rég volt.", cat:"smalltalk" },
+  { sv:"Hälsa henne från mig!", en:"Say hi to her from me!", hu:"Üdvözlöm tőlem!", cat:"smalltalk" },
+  { sv:"Ja, det ska jag göra.", en:"Yes, I will.", hu:"Igen, átadom.", cat:"smalltalk" },
+  { sv:"Hon hälsar tillbaka.", en:"She says hi back.", hu:"Ő is üdvözöl.", cat:"smalltalk" },
+
+  // ---------- CAFÉ / TAKEAWAY ----------
+  { sv:"Hej! Vad kan jag få för dig?", en:"Hi! What can I get for you?", hu:"Szia! Mit hozhatok?", cat:"coffee" },
+  { sv:"En kaffe, tack.", en:"A coffee, please.", hu:"Egy kávét kérek.", cat:"coffee" },
+  { sv:"En kaffe med mjölk, tack.", en:"A coffee with milk, please.", hu:"Egy tejes kávét kérek.", cat:"coffee" },
+  { sv:"En latte / cappuccino, tack.", en:"A latte / cappuccino, please.", hu:"Egy latte / cappuccino, kérem.", cat:"coffee" },
+  { sv:"Att ta med, tack.", en:"To go / takeaway, please.", hu:"Elvitelre, kérem.", cat:"coffee" },
+  { sv:"Ska du äta här eller ta med?", en:"For here or to go?", hu:"Itt fogyasztja vagy elvitelre?", cat:"coffee" },
+  { sv:"Jag tar med.", en:"To take away.", hu:"Elvitelre kérem.", cat:"coffee" },
+  { sv:"Får jag en bulle också, tack.", en:"Can I have a bun too, please.", hu:"Egy zsemlét is kérek.", cat:"coffee" },
+  { sv:"Något mer?", en:"Anything else?", hu:"Még valami?", cat:"coffee" },
+  { sv:"Nej tack, det räcker.", en:"No thanks, that's enough.", hu:"Köszi, az elég.", cat:"coffee" },
+  { sv:"Var det bra så?", en:"Will that be all?", hu:"Ennyi lesz?", cat:"coffee" },
+  { sv:"Ja tack, det var allt.", en:"Yes, that was everything.", hu:"Igen, köszönöm, ennyi.", cat:"coffee" },
+  { sv:"Hur mycket blir det?", en:"How much will it be?", hu:"Mennyibe kerül?", cat:"coffee" },
+  { sv:"Får jag bjuda dig på en kopp kaffe?", en:"Can I buy you a coffee?", hu:"Meghívhatlak egy kávéra?", cat:"coffee" },
+
+  // ---------- SHOPPING / PAYING ----------
+  { sv:"Var hittar jag …?", en:"Where can I find …?", hu:"Hol találom a …?", cat:"shop" },
+  { sv:"Har ni …?", en:"Do you have …?", hu:"Van önöknek …?", cat:"shop" },
+  { sv:"Vad kostar den / det?", en:"How much is it? (en / ett)", hu:"Mennyibe kerül?", cat:"shop" },
+  { sv:"Vad kostar de?", en:"How much do they cost?", hu:"Mennyibe kerülnek?", cat:"shop" },
+  { sv:"Finns den i en annan storlek?", en:"Is there another size?", hu:"Van más méretben?", cat:"shop" },
+  { sv:"Finns den i en annan färg?", en:"Is there another color?", hu:"Van más színben?", cat:"shop" },
+  { sv:"Kan jag prova den?", en:"Can I try it on?", hu:"Felpróbálhatom?", cat:"shop" },
+  { sv:"Jag tar den.", en:"I'll take it.", hu:"Kérem.", cat:"shop" },
+  { sv:"Jag tittar bara, tack.", en:"I'm just looking, thanks.", hu:"Csak nézelődöm, köszi.", cat:"shop" },
+  { sv:"Kan jag betala med kort?", en:"Can I pay by card?", hu:"Lehet kártyával fizetni?", cat:"shop" },
+  { sv:"Kontant eller kort?", en:"Cash or card?", hu:"Készpénz vagy kártya?", cat:"shop" },
+  { sv:"Får jag kvittot, tack?", en:"Can I have the receipt, please?", hu:"Megkaphatom a számlát?", cat:"shop" },
+  { sv:"Får jag notan, tack?", en:"Can I have the bill, please?", hu:"Megkaphatom a számlát? (étterem)", cat:"shop" },
+  { sv:"Ska det bli present?", en:"Is it for a gift?", hu:"Ajándék lesz?", cat:"shop" },
+  { sv:"Ska jag slå in den?", en:"Should I wrap it?", hu:"Becsomagoljam?", cat:"shop" },
+  { sv:"Tack så mycket!", en:"Thanks a lot!", hu:"Nagyon köszönöm!", cat:"shop" },
+  { sv:"Ha en bra dag!", en:"Have a good day!", hu:"Szép napot!", cat:"shop" },
+
+  // ---------- WORK / OFFICE ----------
+  { sv:"Har du varit på kontoret nyligen?", en:"Have you been at the office lately?", hu:"Bent voltál az irodában mostanában?", cat:"work" },
+  { sv:"Jag jobbar mest hemifrån.", en:"I work mostly from home.", hu:"Legtöbbet otthonról dolgozom.", cat:"work" },
+  { sv:"Jag är på kontoret två gånger i veckan.", en:"I'm at the office twice a week.", hu:"Hetente kétszer megyek be.", cat:"work" },
+  { sv:"Jag jobbar heltid / deltid.", en:"I work full-time / part-time.", hu:"Teljes / részmunkaidőben dolgozom.", cat:"work" },
+  { sv:"Har du mycket att göra?", en:"Do you have a lot to do?", hu:"Sok dolgod van?", cat:"work" },
+  { sv:"Jag har mycket möten idag.", en:"I have a lot of meetings today.", hu:"Sok meetingem van ma.", cat:"work" },
+  { sv:"När börjar du jobba?", en:"When do you start work?", hu:"Mikor kezdesz dolgozni?", cat:"work" },
+  { sv:"Jag börjar klockan 9 och slutar klockan halv 6.", en:"I start at 9 and finish at 5:30.", hu:"9-kor kezdek és fél 6-kor végzek.", cat:"work" },
+  { sv:"Jag tar 2 dagar ledigt.", en:"I'm taking 2 days off.", hu:"Kiveszek 2 nap szabit.", cat:"work" },
+  { sv:"Hur går det med projektet?", en:"How's the project going?", hu:"Hogy halad a projekt?", cat:"work" },
+  { sv:"Det går bra, men det är mycket att göra.", en:"It's going well, but there's a lot to do.", hu:"Megy, de sok a meló.", cat:"work" },
+  { sv:"Jag har ett möte klockan halv 3.", en:"I have a meeting at 2:30.", hu:"Fél 3-kor meetingem van.", cat:"work" },
+  { sv:"Vi ses imorgon.", en:"See you tomorrow.", hu:"Holnap találkozunk.", cat:"work" },
+
+  // ---------- HOUSING / ADDRESS ----------
+  { sv:"Var bor du?", en:"Where do you live?", hu:"Hol laksz?", cat:"home" },
+  { sv:"Jag bor i Göteborg / Stockholm.", en:"I live in Gothenburg / Stockholm.", hu:"Göteborgban / Stockholmban élek.", cat:"home" },
+  { sv:"Vilken våning bor du på?", en:"Which floor do you live on?", hu:"Melyik emeleten laksz?", cat:"home" },
+  { sv:"Jag bor på tredje våningen.", en:"I live on the third floor.", hu:"A harmadikon lakom.", cat:"home" },
+  { sv:"Jag bor på 3:an.", en:"I live on the 3rd. (colloquial)", hu:"A 3.-on lakom. (köznyelv)", cat:"home", note:"våning 4 = 4:an" },
+  { sv:"Bor du i en lägenhet eller ett hus?", en:"Do you live in an apartment or a house?", hu:"Lakásban vagy házban laksz?", cat:"home" },
+  { sv:"Jag bor i en lägenhet.", en:"I live in an apartment.", hu:"Lakásban lakom.", cat:"home" },
+  { sv:"Hur stor är din lägenhet?", en:"How big is your apartment?", hu:"Mekkora a lakásod?", cat:"home" },
+  { sv:"Den är 80 kvadratmeter.", en:"It's 80 square meters.", hu:"80 négyzetméter.", cat:"home" },
+  { sv:"Hur länge har du bott där?", en:"How long have you lived there?", hu:"Mióta laksz ott?", cat:"home" },
+  { sv:"Vi flyttade hit för 2 år sedan.", en:"We moved here 2 years ago.", hu:"2 éve költöztünk ide.", cat:"home" },
+  { sv:"Vi har bott här i nästan 3 månader nu.", en:"We've lived here almost 3 months now.", hu:"Majdnem 3 hónapja lakunk itt.", cat:"home" },
+  { sv:"Det är nära jobbet.", en:"It's close to work.", hu:"Közel van a munkahelyhez.", cat:"home" },
+  { sv:"Det ligger bredvid stationen.", en:"It's next to the station.", hu:"Az állomás mellett van.", cat:"home" },
+  { sv:"Det ligger strax utanför stan.", en:"It's just outside the city.", hu:"Épp a város szélén van.", cat:"home" },
+
+  // ---------- BUREAUCRACY ----------
+  { sv:"Har du ansökt om medborgarskap?", en:"Have you applied for citizenship?", hu:"Megpályáztad az állampolgárságot?", cat:"bureau" },
+  { sv:"Jag har ansökt men jag väntar fortfarande.", en:"I applied but I'm still waiting.", hu:"Beadtam, de még várok.", cat:"bureau" },
+  { sv:"Har du fått personnummer?", en:"Have you got a personal number?", hu:"Megvan a személyi számod?", cat:"bureau" },
+  { sv:"Har du BankID?", en:"Do you have BankID?", hu:"Van BankID-d?", cat:"bureau" },
+  { sv:"Kan jag få din legitimation, tack?", en:"Can I have your ID, please?", hu:"Kérhetem az igazolványt?", cat:"bureau" },
+  { sv:"Kan jag hämta medicin åt min fru?", en:"Can I pick up medicine for my wife?", hu:"Átvehetem a feleségem gyógyszerét?", cat:"bureau" },
+  { sv:"Jag har beställt en tid.", en:"I have an appointment booked.", hu:"Lefoglaltam egy időpontot.", cat:"bureau" },
+  { sv:"Jag är hos läkaren imorgon.", en:"I'm at the doctor tomorrow.", hu:"Holnap orvosnál leszek.", cat:"bureau" },
+  { sv:"Det är öppet till klockan 5.", en:"It's open until 5.", hu:"5-ig van nyitva.", cat:"bureau" },
+
+  // ---------- WEATHER ----------
+  { sv:"Hur är vädret?", en:"How's the weather?", hu:"Milyen az idő?", cat:"weather" },
+  { sv:"Det är soligt.", en:"It's sunny.", hu:"Napos.", cat:"weather" },
+  { sv:"Det regnar.", en:"It's raining.", hu:"Esik.", cat:"weather" },
+  { sv:"Det snöar.", en:"It's snowing.", hu:"Havazik.", cat:"weather" },
+  { sv:"Det är blåsigt.", en:"It's windy.", hu:"Szeles.", cat:"weather" },
+  { sv:"Det är kallt / varmt / kyligt.", en:"It's cold / warm / chilly.", hu:"Hideg / meleg / hűvös.", cat:"weather" },
+  { sv:"Det är mulet.", en:"It's cloudy.", hu:"Borult.", cat:"weather" },
+  { sv:"Det är 5 grader ute.", en:"It's 5 degrees outside.", hu:"5 fok van kint.", cat:"weather" },
+  { sv:"Det ser kallt ut.", en:"It looks cold.", hu:"Hidegnek tűnik.", cat:"weather" },
+  { sv:"Nätterna börjar bli kyliga nu.", en:"The nights are starting to get chilly now.", hu:"Az éjszakák kezdenek hűvösek lenni.", cat:"weather" },
+
+  // ---------- PLANS / SUGGESTIONS ----------
+  { sv:"Ska vi gå på bio?", en:"Shall we go to the cinema?", hu:"Menjünk moziba?", cat:"plans" },
+  { sv:"Ska vi ta en promenad?", en:"Shall we take a walk?", hu:"Sétáljunk egyet?", cat:"plans" },
+  { sv:"Ska vi gå på bio eller ta en promenad?", en:"Shall we go to the cinema or take a walk?", hu:"Mozi vagy séta legyen?", cat:"plans" },
+  { sv:"Vill du komma med?", en:"Do you want to come along?", hu:"Akarsz jönni?", cat:"plans" },
+  { sv:"Jag har lust att …", en:"I feel like …", hu:"Kedvem van …", cat:"plans" },
+  { sv:"Vad vill du göra?", en:"What do you want to do?", hu:"Mit szeretnél csinálni?", cat:"plans" },
+  { sv:"Det låter bra.", en:"That sounds good.", hu:"Jól hangzik.", cat:"plans" },
+  { sv:"När passar det för dig?", en:"When does it suit you?", hu:"Mikor jó neked?", cat:"plans" },
+  { sv:"Klockan 6 passar bra.", en:"6 o'clock works well.", hu:"6 megfelel.", cat:"plans" },
+  { sv:"Var ska vi ses?", en:"Where shall we meet?", hu:"Hol találkozzunk?", cat:"plans" },
+  { sv:"Vi ses utanför stationen.", en:"Let's meet outside the station.", hu:"Az állomás előtt találkozzunk.", cat:"plans" },
+  { sv:"Det krockar inte med vår lektion.", en:"It doesn't clash with our lesson.", hu:"Nem ütközik az óránkkal.", cat:"plans" },
+  { sv:"Jag hinner inte i tid.", en:"I won't make it in time.", hu:"Nem érek oda időben.", cat:"plans" },
+  { sv:"Vi får se.", en:"We'll see.", hu:"Meglátjuk.", cat:"plans" },
+];
+
+// =====================================================================
+// UI
+// =====================================================================
+const grid = document.getElementById("grid");
+const catsEl = document.getElementById("cats");
+const q = document.getElementById("q");
+const countEl = document.getElementById("count");
+const revealAllBtn = document.getElementById("reveal-all");
+const hideAllBtn = document.getElementById("hide-all");
+const shuffleBtn = document.getElementById("shuffle");
+
+// State: active categories (empty Set = all)
+const activeCats = new Set();
+let order = ITEMS.map((_, i) => i);
+
+// Build category chips with counts
+function renderCats() {
+  catsEl.innerHTML = "";
+  const counts = {};
+  ITEMS.forEach(it => counts[it.cat] = (counts[it.cat] || 0) + 1);
+
+  const allChip = document.createElement("div");
+  allChip.className = "cat" + (activeCats.size === 0 ? " on" : "");
+  allChip.textContent = `All (${ITEMS.length})`;
+  allChip.onclick = () => { activeCats.clear(); render(); };
+  catsEl.appendChild(allChip);
+
+  CATEGORIES.forEach(c => {
+    const chip = document.createElement("div");
+    chip.className = "cat" + (activeCats.has(c.key) ? " on" : "");
+    chip.textContent = `${c.label} (${counts[c.key] || 0})`;
+    chip.onclick = () => {
+      if (activeCats.has(c.key)) activeCats.delete(c.key);
+      else activeCats.add(c.key);
+      render();
+    };
+    catsEl.appendChild(chip);
+  });
+}
+
+function matches(it, query) {
+  if (!query) return true;
+  const s = (it.sv + " " + it.en + " " + it.hu + " " + (it.note || "")).toLowerCase();
+  return s.includes(query);
+}
+
+function render() {
+  renderCats();
+  const query = q.value.trim().toLowerCase();
+  grid.innerHTML = "";
+  let shown = 0;
+
+  order.forEach(idx => {
+    const it = ITEMS[idx];
+    if (activeCats.size > 0 && !activeCats.has(it.cat)) return;
+    if (!matches(it, query)) return;
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.onclick = () => card.classList.toggle("show");
+
+    const catLabel = CATEGORIES.find(c => c.key === it.cat)?.label || it.cat;
+
+    card.innerHTML = `
+      <div class="meta">${escapeHtml(catLabel)}</div>
+      <div class="sv">${escapeHtml(it.sv)}</div>
+      <div class="tr">
+        <div class="en">EN — ${escapeHtml(it.en)}</div>
+        <div class="hu">HU — ${escapeHtml(it.hu)}</div>
+        ${it.note ? `<div class="note">${escapeHtml(it.note)}</div>` : ""}
+      </div>
+    `;
+    grid.appendChild(card);
+    shown++;
+  });
+
+  countEl.textContent = `${shown} / ${ITEMS.length} shown`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+revealAllBtn.onclick = () => document.querySelectorAll(".card").forEach(c => c.classList.add("show"));
+hideAllBtn.onclick   = () => document.querySelectorAll(".card").forEach(c => c.classList.remove("show"));
+shuffleBtn.onclick   = () => { for (let i = order.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [order[i], order[j]] = [order[j], order[i]]; } render(); };
+
+q.addEventListener("input", render);
+window.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); q.select(); }
+});
+
+render();
+</script>
+</body>
+</html>

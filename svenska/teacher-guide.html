@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide — Svenska</title>
+<style>
+  :root {
+    --bg: #f7f8fb;
+    --panel: #ffffff;
+    --panel-2: #f1f3f8;
+    --ink: #131722;
+    --ink-dim: #555c6a;
+    --border: #e5e8ef;
+    --a: #2563eb;
+    --b: #047857;
+    --accent: #0a7a47;
+    --accent-2: #1d4ed8;
+    --hl: #fde68a;
+    --hl-ink: #78350f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1115;
+      --panel: #161a22;
+      --panel-2: #1e2330;
+      --ink: #e8ecf3;
+      --ink-dim: #98a2b3;
+      --border: #262c3a;
+      --a: #2563eb;
+      --b: #047857;
+      --accent: #6ee7b7;
+      --accent-2: #93c5fd;
+      --hl: #422006;
+      --hl-ink: #fde68a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif; line-height: 1.55; }
+  body { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .sub { color: var(--ink-dim); margin-bottom: 32px; font-size: 14px; }
+  .site-title { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; font-weight: 600; }
+  .nav {
+    display: inline-flex; gap: 2px; margin-bottom: 24px;
+    padding: 3px; background: var(--panel); border: 1px solid var(--border); border-radius: 999px;
+  }
+  .nav a {
+    padding: 6px 14px; border-radius: 999px;
+    text-decoration: none; color: var(--ink-dim); font-size: 13px;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .nav a:hover { color: var(--ink); background: var(--panel-2); }
+  .nav a.active { background: var(--accent-2); color: white; }
+  .nav a.active:hover { background: var(--accent-2); }
+  h2 { margin: 32px 0 8px; font-size: 18px; }
+  h3 { margin: 20px 0 6px; font-size: 15px; }
+  p, li { font-size: 14px; }
+  a { color: var(--a); }
+  code { background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+  .hl {
+    background: var(--hl);
+    color: var(--hl-ink);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    margin: 12px 0;
+  }
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+    margin-right: 4px;
+  }
+  .pill.a { background: var(--a); }
+  .pill.b { background: var(--b); }
+  .demo {
+    background: var(--panel-2);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .demo .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .demo .bub {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .demo .bub.a { background: var(--a); color: white; }
+  .demo .bub.b { background: var(--b); color: white; }
+  .demo .bub.sv { background: var(--border); color: var(--ink); font-style: italic; }
+  .demo .bub.hidden { color: transparent; position: relative; }
+  .demo .bub.hidden.a, .demo .bub.hidden.b { background: var(--ink-dim); opacity: 0.4; }
+  .demo .bub.hidden::after { content: "···"; position: absolute; left: 12px; color: rgba(255,255,255,0.7); font-style: normal; letter-spacing: 4px; }
+  ol, ul { padding-left: 22px; }
+  ol li, ul li { margin: 6px 0; }
+  .ctrl-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 10px 0;
+  }
+  .ctrl-row .name { font-weight: 600; min-width: 150px; font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: var(--a); }
+  .ctrl-row .desc { font-size: 14px; color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="site-title">Svenska</div>
+<nav class="nav">
+  <a href="index.html">Database</a>
+  <a href="dialog.html">Dialog Session</a>
+  <a href="teacher-guide.html" class="active">Guide</a>
+</nav>
+<h1>Guide</h1>
+<div class="sub">How to run a shared Swedish dialog drill with a student.</div>
+
+<h2>About this site</h2>
+<p>This is a small practice tool focused on the <strong>most common Swedish words and connectives</strong> — prepositions (<em>i / på / vid / hos</em>), possessives (<em>min/mitt/mina, sin/sitt/sina</em>), question words (<em>vem / var / vart / varifrån / vilken</em>), time expressions (<em>för 4 år sedan, i 2 år, sedan 2019, på halv 5</em>), and short situational phrases (café, intro, work, housing, the doctor, the airport, etc.).</p>
+<p>The intent is <strong>speed and accuracy on basics</strong>, not vocabulary expansion. Students who already understand a lot of Swedish but stumble on the connective grammar can use it to drill those atoms until they come out automatically.</p>
+
+<h2>The two pages</h2>
+<div class="card">
+  <h3><a href="index.html">index.html</a> — phrase drill</h3>
+  <p>Roughly 375 phrases across 21 categories (prepositions, possessives, modal verbs, common verbs with principal parts, café phrases, etc.). Click any card to reveal the English and Hungarian translation. Search box and category filter at the top. Intended for solo practice.</p>
+</div>
+<div class="card">
+  <h3><a href="dialog.html">dialog.html</a> — dialog drill (shared session)</h3>
+  <p>About 4,600 unique short dialogs (3–6 lines), generated from ~40 templates × typed vocabulary pools. Two speakers, A and B. Designed for a teacher and student to use together during a lesson — see below.</p>
+</div>
+
+<h2>How a shared session works</h2>
+<p>A student opens <a href="dialog.html">dialog.html</a>, enters the session passcode in the wizard, clicks <strong>Start session</strong>, and sends the resulting student link to the teacher. When the teacher opens that link, both browsers stay in sync: the teacher controls what gets revealed, and the student sees only what the teacher has revealed.</p>
+
+<h3>The two roles</h3>
+<div class="ctrl-row">
+  <span class="pill a">Teacher</span>
+  <span class="desc">Sees the entire dialog. Drives the session: presses Next, taps lines to reveal, toggles modes.</span>
+</div>
+<div class="ctrl-row">
+  <span class="pill b">Student</span>
+  <span class="desc">Sees only the lines the teacher has revealed. Their own lines may be visible or hidden depending on the active mode.</span>
+</div>
+
+<h3>What the student sees in default mode</h3>
+<p>By default, the student sees their own lines (whichever speaker A or B is assigned to them) in plain English. The teacher's lines appear as placeholder bubbles: <code>···</code>. The student produces the Swedish for their line out loud; the teacher then taps the line to reveal the Swedish translation so the student can verify.</p>
+
+<div class="demo">
+  <div class="row">
+    <div class="bub a hidden"></div>
+    <div class="bub sv">(hidden until the teacher taps)</div>
+  </div>
+  <div class="row">
+    <div class="bub b">Yes, I'm making carrot cake.</div>
+    <div class="bub sv">(hidden until the teacher taps)</div>
+  </div>
+  <div class="row">
+    <div class="bub a hidden"></div>
+    <div class="bub sv">(hidden until the teacher taps)</div>
+  </div>
+  <div class="row">
+    <div class="bub b">Thanks!</div>
+    <div class="bub sv">(hidden until the teacher taps)</div>
+  </div>
+</div>
+<p style="font-size:12.5px; color:var(--ink-dim);">↑ The student sees their own lines (green, speaker B in this example) and placeholder bubbles for the teacher's lines. The Swedish translation is hidden on both sides until the teacher taps to reveal.</p>
+
+<h3>Teacher controls</h3>
+<div class="ctrl-row">
+  <span class="name">Tap any line</span>
+  <span class="desc">Reveals both English and Swedish of that line — for both sides. Tap again to hide.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">Reveal all / Hide all</span>
+  <span class="desc">Flips every line at once. Useful for stepping through the full dialog after the student has attempted it.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">Show all to student</span>
+  <span class="desc">Master override — everything is visible to the student regardless of per-line state. Use for review / discussion.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">Strict</span>
+  <span class="desc">Hides the student's own lines too. The student sees only what the teacher reveals — including the lines they're meant to say. Harder mode; also works as listening practice.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">Student speaks as: A / B</span>
+  <span class="desc">Choose which speaker (A in blue or B in green) is the student. Default is B (the responder). Switch to A if the student should initiate.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">Next dialog →</span>
+  <span class="desc">Generates a new random dialog from one of ~40 templates. Both views jump together.</span>
+</div>
+<div class="ctrl-row">
+  <span class="name">← Prev</span>
+  <span class="desc">Returns to the previous dialog. Useful for review.</span>
+</div>
+
+<h2>Recommended flow during a lesson</h2>
+<ol>
+  <li>The student opens the wizard, enters the passcode, clicks Start, and sends the student link to the teacher.</li>
+  <li>The teacher opens the link. Both views connect — the top bar should show <span style="color:#10b981">●&nbsp;connected</span>.</li>
+  <li>A random dialog appears. The student's lines are coloured (green for B, blue for A); the teacher's lines appear as <code>···</code> placeholders on the student's screen.</li>
+  <li>The teacher reads their line out loud, then taps it to reveal it on the student's screen.</li>
+  <li>The student responds in Swedish (their next line). The teacher taps that line to reveal the model Swedish on both screens for comparison.</li>
+  <li>When the dialog is finished or the student is stuck, the teacher taps <strong>Reveal all</strong> to discuss the full text.</li>
+  <li>Tap <strong>Next dialog</strong> to continue. The goal is brisk pace.</li>
+</ol>
+
+<div class="hl">
+  <strong>Note:</strong> the system is designed for muscle-memory drilling, not realism. Some dialogs will be lightly absurd (<em>"Want to try the coffee?"</em>, <em>"We bought it last Friday"</em>). That's intentional — the aim is for the student to produce the right preposition, pronoun, and verb form quickly and correctly, not to construct logically perfect conversations.
+</div>
+
+<h2>Errors</h2>
+<p>If the page displays an error code (<code>Code-E01</code>, etc.), the most common cause is a network blip; refreshing usually resolves it. Persistent errors should be reported to whoever maintains the site.</p>
+
+</body>
+</html>
