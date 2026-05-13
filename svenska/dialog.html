@@ -50,19 +50,8 @@
   body { padding: 16px; max-width: 1100px; margin: 0 auto; }
   h1 { font-size: 20px; margin: 0 0 4px; }
   .sub { color: var(--ink-dim); font-size: 13px; margin-bottom: 16px; }
-  .site-title { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; font-weight: 600; }
-  .nav {
-    display: inline-flex; gap: 2px; margin-bottom: 18px;
-    padding: 3px; background: var(--panel); border: 1px solid var(--border); border-radius: 999px;
-  }
-  .nav a {
-    padding: 6px 14px; border-radius: 999px;
-    text-decoration: none; color: var(--ink-dim); font-size: 13px;
-    transition: background 0.12s ease, color 0.12s ease;
-  }
-  .nav a:hover { color: var(--ink); background: var(--panel-2); }
-  .nav a.active { background: var(--accent-2); color: white; }
-  .nav a.active:hover { background: var(--accent-2); }
+  .back-link { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-2); text-decoration: none; font-size: 13px; margin-bottom: 12px; }
+  .back-link:hover { text-decoration: underline; }
 
   .toolbar {
     display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
@@ -232,95 +221,7 @@
   .role-student .bubble.en,
   .role-student .bubble.sv { cursor: default; }
 
-  /* ---- Wizard landing ---- */
-  .wizard-card {
-    max-width: 480px;
-    margin: 32px auto;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-  }
-  .wizard-card h2 { margin: 0 0 6px; font-size: 22px; }
-  .wizard-card .lead { color: var(--ink-dim); margin: 0 0 20px; font-size: 14px; line-height: 1.5; }
-  .wizard-card label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-top: 14px;
-    margin-bottom: 4px;
-  }
-  .wizard-card input[type="text"], .wizard-card input[type="password"] {
-    width: 100%;
-    background: var(--panel-2);
-    color: var(--ink);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 14px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  }
-  .wizard-card input:focus { border-color: var(--accent-2); outline: none; }
-  .wizard-card .help { font-size: 12px; color: var(--ink-dim); margin-top: 4px; }
-  .wizard-card .row { display: flex; gap: 8px; }
-  .wizard-card button.primary {
-    width: 100%;
-    margin-top: 16px;
-    padding: 12px;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .wizard-divider {
-    text-align: center;
-    color: var(--ink-dim);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin: 28px 0 12px;
-    position: relative;
-  }
-  .wizard-divider::before, .wizard-divider::after {
-    content: ""; position: absolute; top: 50%; height: 1px; background: var(--border);
-    width: calc(50% - 60px);
-  }
-  .wizard-divider::before { left: 0; }
-  .wizard-divider::after { right: 0; }
-  .wizard-card .error {
-    background: rgba(239,68,68,0.15);
-    color: #fca5a5;
-    border: 1px solid rgba(239,68,68,0.4);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    margin-top: 10px;
-  }
-  @media (prefers-color-scheme: light) {
-    .wizard-card .error { color: #b91c1c; background: rgba(239,68,68,0.08); }
-  }
-  .wizard-card .skip-link {
-    display: block;
-    text-align: center;
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--ink-dim);
-    text-decoration: none;
-  }
-  .wizard-card .skip-link:hover { color: var(--ink); text-decoration: underline; }
-  .wizard-card .regen {
-    background: transparent;
-    border: 0;
-    color: var(--accent-2);
-    font-size: 12px;
-    padding: 2px 0;
-    cursor: pointer;
-    margin-top: 2px;
-  }
-  .wizard-card .regen:hover { text-decoration: underline; }
-
-  /* ---- Setup notice (Firebase not configured) ---- */
+  /* ---- Setup notice (config missing) ---- */
   .setup-notice {
     background: #422006;
     color: #fde68a;
@@ -335,48 +236,9 @@
 </head>
 <body>
 
-<div class="site-title">Svenska</div>
-<nav class="nav">
-  <a href="index.html">Database</a>
-  <a href="dialog.html" class="active">Dialog Session</a>
-  <a href="teacher-guide.html">Guide</a>
-</nav>
+<a class="back-link" href="index.html">← Svenska</a>
 <h1>Dialog Session</h1>
-<div class="sub">Speaker <span style="color:var(--a)">A</span> and <span style="color:var(--b)">B</span> stack vertically. Tap a coloured bubble to reveal the English; tap a grey bubble to reveal the Swedish. Or use <b>Reveal next →</b> (or <kbd>space</kbd>) to step through.</div>
-
-<!-- WIZARD: shown when Firebase is configured but no session is in URL -->
-<div id="wizard" hidden>
-  <div class="wizard-card">
-    <h2>Start a session</h2>
-    <p class="lead">Create a shared session between a teacher and a student. Both sides see the same dialogs in real time; the teacher controls reveals.</p>
-
-    <label for="wiz-session-id">Session ID</label>
-    <input type="text" id="wiz-session-id" autocomplete="off">
-    <button type="button" class="regen" id="wiz-regen">↻ Generate new</button>
-    <div class="help">Any string works. Pick something hard to guess.</div>
-
-    <label for="wiz-passcode">Passcode</label>
-    <input type="password" id="wiz-passcode" autocomplete="off">
-    <div class="help">The shared passcode for this site.</div>
-
-    <button id="wiz-start" class="primary">Start session</button>
-    <div id="wiz-error" class="error" hidden></div>
-
-    <div class="wizard-divider">or join existing</div>
-
-    <label for="wiz-join-id">Existing session ID</label>
-    <input type="text" id="wiz-join-id" autocomplete="off" placeholder="e.g. lesson-20260513-x7p2">
-    <div class="row" style="margin-top:10px;">
-      <button id="wiz-join-teacher" style="flex:1;">Open as teacher</button>
-      <button id="wiz-join-student" style="flex:1;">Open as student</button>
-    </div>
-
-    <a href="#" class="skip-link" id="wiz-skip">Skip — practice solo (single user)</a>
-  </div>
-</div>
-
-<!-- APP: everything below shows once a session is chosen (or in single-user mode) -->
-<div id="app" hidden>
+<div class="sub">Tap a coloured bubble to reveal the English; tap a grey bubble to reveal the Swedish. Or use <b>Reveal next →</b> (or <kbd>space</kbd>) to step through.</div>
 
 <div id="setup-notice" class="setup-notice" hidden></div>
 
@@ -410,8 +272,6 @@
 <div class="meta" id="meta"></div>
 
 <footer>Press <kbd>space</kbd> to reveal next, <kbd>shift</kbd>+<kbd>space</kbd> to step back, <kbd>→</kbd>/<kbd>←</kbd> for next/prev dialog</footer>
-
-</div><!-- /#app -->
 
 <script>
 "use strict";
@@ -2168,166 +2028,28 @@ if (role === "student") {
 // =====================================================================
 // INIT
 // =====================================================================
-// =====================================================================
-// WIZARD
-// =====================================================================
-function generateSessionId() {
-  const now = new Date();
-  const stamp = now.getFullYear().toString()
-              + String(now.getMonth() + 1).padStart(2, "0")
-              + String(now.getDate()).padStart(2, "0");
-  const suffix = Math.random().toString(36).slice(2, 6);
-  return `lesson-${stamp}-${suffix}`;
-}
-
-function showWizard() {
-  document.getElementById("wizard").hidden = false;
-  document.getElementById("app").hidden = true;
-
-  const sidInput = document.getElementById("wiz-session-id");
-  sidInput.value = generateSessionId();
-
-  document.getElementById("wiz-regen").onclick = () => { sidInput.value = generateSessionId(); };
-
-  document.getElementById("wiz-start").onclick = wizStart;
-  document.getElementById("wiz-join-teacher").onclick = () => wizJoin("teacher");
-  document.getElementById("wiz-join-student").onclick = () => wizJoin("student");
-  document.getElementById("wiz-skip").onclick = (e) => {
-    e.preventDefault();
-    // launch single-user mode without leaving the page
-    document.getElementById("wizard").hidden = true;
-    document.getElementById("app").hidden = false;
-    role = "single";
-    renderSessionBar();
-    syncToolbar();
-    nextDialog();
-  };
-
-  // Enter key in passcode submits
-  document.getElementById("wiz-passcode").addEventListener("keydown", e => {
-    if (e.key === "Enter") wizStart();
-  });
-}
-
-async function wizStart() {
-  const errEl = document.getElementById("wiz-error");
-  errEl.hidden = true;
-
-  const sid = document.getElementById("wiz-session-id").value.trim() || generateSessionId();
-  const pc  = document.getElementById("wiz-passcode").value;
-
-  if (!pc) {
-    errEl.textContent = "Passcode required.";
-    errEl.hidden = false;
-    return;
-  }
-
-  if (typeof firebase === "undefined") {
-    console.error("[E05] Backend SDK didn't load in wizard");
-    errEl.textContent = "Something went wrong: Code-E05";
-    errEl.hidden = false;
-    return;
-  }
-
-  // Initialize backend if not already
-  try {
-    if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-  } catch (e) {
-    console.error("[E06] Init failed in wizard:", e);
-    errEl.textContent = "Something went wrong: Code-E06";
-    errEl.hidden = false;
-    return;
-  }
-
-  // Test the passcode by writing an initial dialog to /sessions/{sid}
-  const startBtn = document.getElementById("wiz-start");
-  startBtn.disabled = true;
-  startBtn.textContent = "Creating…";
-  try {
-    const ti = Math.floor(Math.random() * TEMPLATES.length);
-    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
-    const initial = {
-      templateIdx: ti,
-      seed,
-      revealed: new Array(TEMPLATES[ti].speakers.length).fill(false),
-      showAll: false,
-      strictMode: false,
-      studentSpeaks: "B",
-      passcode: pc,
-    };
-    await firebase.database().ref("sessions/" + sid).set(initial);
-    // Success — save passcode and navigate to teacher view
-    localStorage.setItem("svenska_passcode", pc);
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set("session", sid);
-    newUrl.searchParams.set("role", "teacher");
-    window.location.href = newUrl.toString();
-  } catch (e) {
-    const msg = String(e);
-    if (msg.includes("PERMISSION_DENIED")) {
-      console.error("[E07] Wizard write rejected (passcode mismatch):", e);
-      errEl.textContent = "Wrong passcode.";
-    } else {
-      console.error("[E08] Wizard write failed:", e);
-      errEl.textContent = "Something went wrong: Code-E08";
-    }
-    errEl.hidden = false;
-  } finally {
-    startBtn.disabled = false;
-    startBtn.textContent = "Start session";
-  }
-}
-
-function wizJoin(joinRole) {
-  const errEl = document.getElementById("wiz-error");
-  errEl.hidden = true;
-  const sid = document.getElementById("wiz-join-id").value.trim();
-  if (!sid) {
-    errEl.textContent = "Enter a session ID to join.";
-    errEl.hidden = false;
-    return;
-  }
-  if (joinRole === "teacher") {
-    let pc = localStorage.getItem("svenska_passcode");
-    if (!pc) {
-      pc = prompt("Enter the session passcode:");
-      if (!pc) return;
-      localStorage.setItem("svenska_passcode", pc);
-    }
-  }
-  const newUrl = new URL(window.location.href);
-  newUrl.searchParams.set("session", sid);
-  newUrl.searchParams.set("role", joinRole);
-  window.location.href = newUrl.toString();
-}
-
-
-// =====================================================================
-// INIT — pick a path based on URL + Firebase config
+// INIT — sessions are created on the landing page; this page only runs
+// against an existing session (or in single-user mode if no session
+// parameter is present and the backend isn't reachable).
 // =====================================================================
 if (_setupWarning) showSetupNotice(_setupWarning);
 
-if (!SESSION_ID && FIREBASE_CONFIGURED) {
-  // No session in URL → show the wizard
-  showWizard();
+// If a session URL parameter is present and the backend is configured,
+// we run in teacher/student mode. Otherwise — including the no-param
+// case — drop into single-user practice. (To create a new shared
+// session, the landing page handles it.)
+if (role === "teacher" && !localStorage.getItem("svenska_passcode")) {
+  const pc = prompt("Enter the session passcode:");
+  if (pc) localStorage.setItem("svenska_passcode", pc);
+}
+
+renderSessionBar();
+syncToolbar();
+
+if (role === "single") {
+  nextDialog();
 } else {
-  // Either single-user mode or already in a session
-  document.getElementById("app").hidden = false;
-
-  // If teacher needs a passcode and none is stored, prompt
-  if (role === "teacher" && !localStorage.getItem("svenska_passcode")) {
-    const pc = prompt("Enter the session passcode:");
-    if (pc) localStorage.setItem("svenska_passcode", pc);
-  }
-
-  renderSessionBar();
-  syncToolbar();
-
-  if (role === "single") {
-    nextDialog();
-  } else {
-    initFirebase();
-  }
+  initFirebase();
 }
 </script>
 </body>

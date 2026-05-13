@@ -40,19 +40,8 @@
   body { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
   h1 { font-size: 26px; margin: 0 0 4px; }
   .sub { color: var(--ink-dim); margin-bottom: 32px; font-size: 14px; }
-  .site-title { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 8px; font-weight: 600; }
-  .nav {
-    display: inline-flex; gap: 2px; margin-bottom: 24px;
-    padding: 3px; background: var(--panel); border: 1px solid var(--border); border-radius: 999px;
-  }
-  .nav a {
-    padding: 6px 14px; border-radius: 999px;
-    text-decoration: none; color: var(--ink-dim); font-size: 13px;
-    transition: background 0.12s ease, color 0.12s ease;
-  }
-  .nav a:hover { color: var(--ink); background: var(--panel-2); }
-  .nav a.active { background: var(--accent-2); color: white; }
-  .nav a.active:hover { background: var(--accent-2); }
+  .back-link { display: inline-flex; align-items: center; gap: 4px; color: var(--a); text-decoration: none; font-size: 13px; margin-bottom: 16px; }
+  .back-link:hover { text-decoration: underline; }
   h2 { margin: 32px 0 8px; font-size: 18px; }
   h3 { margin: 20px 0 6px; font-size: 15px; }
   p, li { font-size: 14px; }
@@ -122,12 +111,7 @@
 </head>
 <body>
 
-<div class="site-title">Svenska</div>
-<nav class="nav">
-  <a href="index.html">Database</a>
-  <a href="dialog.html">Dialog Session</a>
-  <a href="teacher-guide.html" class="active">Guide</a>
-</nav>
+<a class="back-link" href="index.html">← Svenska</a>
 <h1>Guide</h1>
 <div class="sub">How to run a shared Swedish dialog drill with a student.</div>
 
@@ -137,16 +121,16 @@
 
 <h2>The two pages</h2>
 <div class="card">
-  <h3><a href="index.html">index.html</a> — phrase drill</h3>
+  <h3><a href="database.html">Database</a> — phrase drill</h3>
   <p>Roughly 375 phrases across 21 categories (prepositions, possessives, modal verbs, common verbs with principal parts, café phrases, etc.). Click any card to reveal the English and Hungarian translation. Search box and category filter at the top. Intended for solo practice.</p>
 </div>
 <div class="card">
-  <h3><a href="dialog.html">dialog.html</a> — dialog drill (shared session)</h3>
+  <h3><a href="dialog.html">Dialog Session</a> — generated dialogs</h3>
   <p>About 4,600 unique short dialogs (3–6 lines), generated from ~40 templates × typed vocabulary pools. Two speakers, A and B. Designed for a teacher and student to use together during a lesson — see below.</p>
 </div>
 
 <h2>How a shared session works</h2>
-<p>A student opens <a href="dialog.html">dialog.html</a>, enters the session passcode in the wizard, clicks <strong>Start session</strong>, and sends the resulting student link to the teacher. When the teacher opens that link, both browsers stay in sync: the teacher controls what gets revealed, and the student sees only what the teacher has revealed.</p>
+<p>A student opens the <a href="index.html">landing page</a>, enters the session passcode, clicks <strong>Start session</strong>, and shares the resulting student link with the teacher (it's auto-copied to the clipboard). When the teacher opens that link, both browsers stay in sync: the teacher controls what gets revealed, and the student sees only what the teacher has revealed.</p>
 
 <h3>The two roles</h3>
 <div class="ctrl-row">
@@ -213,7 +197,7 @@
 
 <h2>Recommended flow during a lesson</h2>
 <ol>
-  <li>The student opens the wizard, enters the passcode, clicks Start, and sends the student link to the teacher.</li>
+  <li>The student opens the landing page, enters the passcode, clicks Start, and shares the student link with the teacher.</li>
   <li>The teacher opens the link. Both views connect — the top bar should show <span style="color:#10b981">●&nbsp;connected</span>.</li>
   <li>A random dialog appears. The student's lines are coloured (green for B, blue for A); the teacher's lines appear as <code>···</code> placeholders on the student's screen.</li>
   <li>The teacher reads their line out loud, then taps it to reveal it on the student's screen.</li>

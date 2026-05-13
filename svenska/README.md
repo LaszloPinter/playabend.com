@@ -4,11 +4,12 @@ Static HTML for drilling Swedish — designed for high-frequency, low-vocabulary
 
 Deployed at **<https://playabend.com/svenska/>**.
 
-Three pages:
+Four pages:
 
-- **`index.html`** — *Database*. ~375 phrases across 21 categories (prepositions, possessives, question words, time expressions, modal verbs, common verbs, situational phrases). Click-to-reveal English + Hungarian. Search + category filter.
-- **`dialog.html`** — *Dialog Session*. ~4,600 unique short 3–6 line dialogs, generated from ~40 templates × typed vocabulary pools. Two-speaker layout with per-bubble reveal. Designed for live teacher↔student sessions over Firebase, or solo single-user practice.
-- **`teacher-guide.html`** — *Guide*. Short documentation for the teacher on what the system is, what the student is drilling, and how to drive a shared session.
+- **`index.html`** — *Landing*. Session creation form (passcode → starts a shared session and shows the student link in a modal that auto-copies to the clipboard). Has nav buttons to *Database* and *Guide*.
+- **`database.html`** — ~375 phrases across 21 categories (prepositions, possessives, question words, time expressions, modal verbs, common verbs, situational phrases). Click-to-reveal English + Hungarian. Search + category filter.
+- **`dialog.html`** — ~4,600 unique short 3–6 line dialogs, generated from ~40 templates × typed vocabulary pools. Two-speaker layout with per-bubble reveal. Joined via `?session=ID&role=teacher|student` URL (sessions are created on the landing page). Falls back to single-user solo practice if no session is in the URL.
+- **`teacher-guide.html`** — short documentation for the teacher on what the system is, what the student is drilling, and how to drive a shared session.
 
 No build step. Edit the HTML files directly and push to GitHub Pages.
 
@@ -152,7 +153,7 @@ That prompt is self-sufficient — an agent can extend the system without re-exp
 The deployed copy lives at **<https://playabend.com/svenska/>**, served from the `svenska/` folder of the [`playabend.com`](https://github.com/LaszloPinter/playabend.com) repo (GitHub Pages with custom domain). To update:
 
 1. Make changes in `/Users/laszlopinter/Projects/svenska/` (this directory)
-2. Copy the three HTML files (`index.html`, `dialog.html`, `teacher-guide.html`) and `README.md` to `/Users/laszlopinter/Projects/playabend.com/svenska/`
+2. Copy the four HTML files (`index.html`, `database.html`, `dialog.html`, `teacher-guide.html`) and `README.md` to `/Users/laszlopinter/Projects/playabend.com/svenska/`
 3. `git add svenska/ && git commit && git push` from the playabend.com repo
 
 ---
@@ -209,12 +210,11 @@ The deployed copy lives at **<https://playabend.com/svenska/>**, served from the
 
 ### Usage
 
-1. The student opens `dialog.html` (no URL parameters). A wizard appears.
-2. They click **Generate new** for a fresh session ID, enter the **passcode**, and click **Start session**. The wizard validates the passcode by writing the initial state. If accepted, it stores the passcode in `localStorage` and navigates to the teacher view.
-3. The student clicks **Copy student link** and sends it to the teacher.
-4. The teacher opens the link. Both views mirror in real time.
+1. The student opens the landing page (`index.html`), enters the **passcode**, and clicks **Start session**. The page validates the passcode by writing the initial state. If accepted, it stores the passcode in `localStorage` and pops a modal containing the student link (auto-copied to the clipboard, with a "Share…" button on mobile).
+2. The student shares that link with the teacher (it's already on the clipboard) and clicks **Open teacher view →** in the modal to enter the session as the controller.
+3. The teacher opens the student link. Both views mirror in real time.
 
-Note: in the wizard flow, whoever creates the session lands in the teacher role (the controller). If a different physical person needs to drive the page, share the **teacher** URL with them (or have them do the wizard step) and click the student link yourself.
+The dialog page also has a **Copy student link** button in the teacher controls, so the link can be re-shared later without going back to the landing.
 
 If the page shows `Code-EXX`, check the browser console for the underlying error. Most commonly: rules not published yet, or a network blip — refresh.
 
