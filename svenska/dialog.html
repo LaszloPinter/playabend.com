@@ -238,7 +238,7 @@
 
 <a class="back-link" href="index.html">← Svenska</a>
 <h1>Dialog Session</h1>
-<div class="sub">Tap a coloured bubble to reveal the English; tap a grey bubble to reveal the Swedish. Or use <b>Reveal next →</b> (or <kbd>space</kbd>) to step through.</div>
+<div class="sub" id="page-sub">Tap a coloured bubble to reveal the English; tap a grey bubble to reveal the Swedish. Or use <b>Reveal next →</b> (or <kbd>space</kbd>) to step through.</div>
 
 <div id="setup-notice" class="setup-notice" hidden></div>
 
@@ -246,7 +246,6 @@
 
 <div class="toolbar">
   <button id="prev">← Prev</button>
-  <button id="replay">Replay</button>
   <button id="reveal-all">Reveal all</button>
   <button id="hide-all">Hide all</button>
   <button id="reveal-next">Reveal next →</button>
@@ -271,7 +270,7 @@
 
 <div class="meta" id="meta"></div>
 
-<footer>Press <kbd>space</kbd> to reveal next, <kbd>shift</kbd>+<kbd>space</kbd> to step back, <kbd>→</kbd>/<kbd>←</kbd> for next/prev dialog</footer>
+<footer id="page-footer">Press <kbd>space</kbd> to reveal next, <kbd>shift</kbd>+<kbd>space</kbd> to step back, <kbd>→</kbd>/<kbd>←</kbd> for next/prev dialog</footer>
 
 <script>
 "use strict";
@@ -1806,10 +1805,6 @@ function prevDialog() {
   }
 }
 
-function replay() {
-  applyAndRender();
-}
-
 function toggleRevealEn(i) {
   if (role === "student") return;
   state.revealed_en = state.revealed_en.slice();
@@ -1915,7 +1910,6 @@ function syncToolbar() {
   const isStudent = role === "student";
   document.getElementById("prev").disabled        = isStudent || cursor <= 0;
   document.getElementById("next").disabled        = isStudent;
-  document.getElementById("replay").disabled      = false;
   document.getElementById("reveal-all").disabled  = isStudent;
   document.getElementById("hide-all").disabled    = isStudent;
   document.getElementById("reveal-next").disabled = isStudent;
@@ -1979,7 +1973,6 @@ function escapeHtml(s) {
 
 document.getElementById("next").onclick        = nextDialog;
 document.getElementById("prev").onclick        = prevDialog;
-document.getElementById("replay").onclick      = replay;
 document.getElementById("reveal-all").onclick  = revealAll;
 document.getElementById("hide-all").onclick    = hideAll;
 document.getElementById("reveal-next").onclick = revealNextStep;
@@ -2022,6 +2015,12 @@ if (role === "student") {
   document.getElementById("reveal-all").style.display  = "none";
   document.getElementById("hide-all").style.display    = "none";
   document.getElementById("reveal-next").style.display = "none";
+  // Replace the instructional sub with something role-appropriate;
+  // hide the keyboard footer hint (the shortcuts don't apply).
+  const sub = document.getElementById("page-sub");
+  if (sub) sub.textContent = "Lines will appear here as the teacher reveals them.";
+  const ft = document.getElementById("page-footer");
+  if (ft) ft.style.display = "none";
 }
 
 
